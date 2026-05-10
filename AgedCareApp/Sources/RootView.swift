@@ -25,13 +25,19 @@ struct RootView: View {
           }
         }
       case .resident(let facilityId, let residentId):
-        ResidentShellView(facilityId: facilityId, residentId: residentId)
-          .environmentObject(container)
-          .environmentObject(HandoffService.shared)
+        UnifiedShellView(
+          mode: .resident(facilityId: facilityId, residentId: residentId),
+          session: session
+        )
+        .environmentObject(container)
+        .environmentObject(HandoffService.shared)
       case .staff(let staff):
-        StaffShellView(staff: staff, session: session)
-          .environmentObject(container)
-          .environmentObject(HandoffService.shared)
+        UnifiedShellView(
+          mode: .staff(staff),
+          session: session
+        )
+        .environmentObject(container)
+        .environmentObject(HandoffService.shared)
       }
     }
     .dynamicTypeSize(...DynamicTypeSize.accessibility5)

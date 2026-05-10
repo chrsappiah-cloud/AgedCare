@@ -7,6 +7,7 @@ struct StaffShellView: View {
   @EnvironmentObject var handoff: HandoffService
   @State private var showAIMonitor = false
   @State private var showHandoffBanner = false
+  @State private var showResidentDetail = false
 
   var body: some View {
     TabView {
@@ -44,6 +45,12 @@ struct StaffShellView: View {
     .tint(AppTheme.emeraldGreen)
     .accessibilityLabel("Main tabs")
     .overlay(alignment: .top) { handoffBanner }
+    .onAppear {
+      handoff.startPolling(facilityId: staff.facilityId.uuidString)
+    }
+    .onDisappear {
+      handoff.stopPolling()
+    }
     .onChange(of: handoff.pendingHandoff) { _, newValue in
       showHandoffBanner = newValue != nil
     }
@@ -54,6 +61,12 @@ struct StaffShellView: View {
           staff: staff, session: session, handoff: handoff
         )
       }
+    }
+    .onChange(of: handoff.routingResidentId) { _, newValue in
+      showResidentDetail = newValue != nil
+    }
+    .sheet(isPresented: $showResidentDetail) {
+      routingSheet
     }
   }
 
@@ -80,6 +93,33 @@ struct StaffShellView: View {
       .transition(.move(edge: .top).combined(with: .opacity))
       .animation(.spring, value: showHandoffBanner)
       .accessibilityLabel("\(name) has requested staff assistance. Tap to respond.")
+    }
+  }
+
+  @ViewBuilder
+  private var routingSheet: some View {
+    if let rid = handoff.routingResidentId {
+      let resident = ResidentModel(
+        id: rid,
+        facilityId: staff.facilityId,
+        name: "Resident \(rid.uuidString.prefix(6))",
+        riskLevel: nil,
+        dateOfBirth: nil
+      )
+      NavigationStack {
+        ResidentOverviewView(resident: resident)
+          .environmentObject(container)
+          .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+              Button("Done") {
+                handoff.routingResidentId = nil
+                showResidentDetail = false
+              }
+            }
+          }
+      }
+    } else {
+      EmptyView()
     }
   }
 
@@ -137,12 +177,13 @@ struct HandoffRequestView: View {
               session: session
             )
           }
+          handoff.routeToResident(residentId: residentId)
           dismiss()
         }) {
           Label("Respond to \(residentName)", systemImage: "person.fill.checkmark")
             .primaryButtonStyle()
         }
-        .accessibilityHint("Marks this request as handled and notifies the resident")
+        .accessibilityHint("Opens the resident details and marks request as handled")
 
         Button(role: .cancel) {
           handoff.clearHandoff()

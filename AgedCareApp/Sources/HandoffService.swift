@@ -35,6 +35,7 @@ final class HandoffService: NSObject, ObservableObject {
   @Published var pendingHandoff: HandoffAction?
   @Published var activeTransferToken: String?
   @Published var pendingRequests: [HandoffRequest] = []
+  @Published var routingResidentId: UUID?
 
   struct HandoffRequest: Identifiable, Decodable {
     let id: Int
@@ -46,10 +47,39 @@ final class HandoffService: NSObject, ObservableObject {
 
   private var handoffCallback: ((HandoffAction) -> Void)?
   private let baseURL = AppHost.baseURL
+  private var pollTask: Task<Void, Never>?
 
   func startListening(callback: @escaping (HandoffAction) -> Void) {
     handoffCallback = callback
     registerForPushHandoffs()
+  }
+
+  func startPolling(facilityId: String) {
+    pollTask?.cancel()
+    pollTask = Task { [weak self] in
+      while !Task.isCancelled {
+        await self?.fetchPendingRequests(facilityId: facilityId)
+        if let request = self?.pendingRequests.first,
+           self?.pendingHandoff == nil {
+          self?.pendingHandoff = .requestStaff(
+            facilityId: request.facilityId,
+            residentId: request.residentId,
+            residentName: request.notes ?? "Resident"
+          )
+        }
+        try? await Task.sleep(nanoseconds: 10_000_000_000)
+      }
+    }
+  }
+
+  func stopPolling() {
+    pollTask?.cancel()
+    pollTask = nil
+  }
+
+  func routeToResident(residentId: String) {
+    guard let uuid = UUID(uuidString: residentId) else { return }
+    routingResidentId = uuid
   }
 
   func requestStaff(facilityId: String, residentId: String, residentName: String) async {

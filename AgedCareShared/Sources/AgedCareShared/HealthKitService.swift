@@ -74,6 +74,11 @@ public final class HealthKitService: @unchecked Sendable {
   public func requestAuthorization() async throws {
     guard isAvailable else { throw HealthKitError.notAvailable }
 
+    guard Bundle.main.infoDictionary?["NSHealthShareUsageDescription"] != nil,
+          Bundle.main.infoDictionary?["NSHealthUpdateUsageDescription"] != nil else {
+      throw HealthKitError.notAvailable
+    }
+
     let typesToRead: Set<HKObjectType> = [
       HKObjectType.quantityType(forIdentifier: .heartRate)!,
       HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
@@ -88,9 +93,18 @@ public final class HealthKitService: @unchecked Sendable {
       HKObjectType.quantityType(forIdentifier: .heartRate)!,
     ]
 
-    try await store.requestAuthorization(toShare: typesToWrite, read: typesToRead)
+    do {
+      try await store.requestAuthorization(toShare: typesToWrite, read: typesToRead)
+    } catch {
+      throw HealthKitError.notAuthorized
+    }
     authorizations = [.heartRate, .oxygenSaturation, .stepCount]
-    try setupBackgroundObservers()
+
+    do {
+      try setupBackgroundObservers()
+    } catch {
+      print("[HealthKit] Background observers setup failed: \(error.localizedDescription)")
+    }
   }
 
   private func setupBackgroundObservers() throws {

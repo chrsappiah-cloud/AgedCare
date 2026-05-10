@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>audio</string>
+		<string>processing</string>
+	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>AgedCare Monitor reads health data to track resident vitals such as heart rate, blood oxygen, and step count for anomaly detection.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>AgedCare Monitor writes health data to record monitoring measurements and vitals collected during care sessions.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>AgedCare Monitor uses the camera for AI-powered fall detection, room monitoring, and capturing photo evidence for incident reports.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>AgedCare Monitor uses the microphone for real-time audio monitoring, distress sound detection, and voice-based keyword alerts in resident rooms.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>AgedCare Monitor uses speech recognition to transcribe resident audio for keyword detection such as calls for help or distress phrases.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>AgedCare Monitor accesses your photo library to attach images to incident reports and care notes.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>AgedCare Monitor saves captured photos and video recordings to your photo library for record-keeping.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>AgedCare Monitor uses your location to identify the facility and associate alerts with the correct site.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>AgedCare Monitor uses Face ID to securely authenticate staff members.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>AgedCare Monitor uses the local network to communicate with facility monitoring devices and sensors.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_agedcare._tcp</string>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+</dict>
+</plist>
