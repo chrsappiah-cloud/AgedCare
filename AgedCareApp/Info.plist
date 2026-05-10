@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>AgedCareApp</string>
+  <key>CFBundleDisplayName</key>
+  <string>AgedCare</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.agedcare.app</string>
+  <key>CFBundleExecutable</key>
+  <string>$(EXECUTABLE_NAME)</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>LSRequiresIPhoneOS</key>
+  <true/>
+  <key>UIApplicationSceneManifest</key>
+  <dict>
+    <key>UIApplicationSupportsMultipleScenes</key>
+    <false/>
+  </dict>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+  </array>
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>remote-notification</string>
+    <string>processing</string>
+  </array>
+  <key>NSHealthShareUsageDescription</key>
+  <string>AgedCare reads heart rate and oxygen saturation to detect abnormal vitals and trigger alerts for residents.</string>
+  <key>NSHealthUpdateUsageDescription</key>
+  <string>AgedCare records heart rate data to monitor resident health trends.</string>
+</dict>
+</plist>

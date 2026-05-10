@@ -1,0 +1,24 @@
+# Xcode
+*.xcworkspace
+xcuserdata/
+DerivedData/
+*.xcodeproj/xcuserdata
+.build/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated
+AppStoreAssets/*.png
+generate_icon.py
+generate_screenshots.py

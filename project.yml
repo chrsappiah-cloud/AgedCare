@@ -1,0 +1,53 @@
+name: AgedCare
+options:
+  bundleIdPrefix: com.agedcare
+  deploymentTarget:
+    iOS: "17.0"
+
+packages:
+  AgedCareShared:
+    path: ./AgedCareShared
+
+targets:
+  AgedCareApp:
+    type: application
+    platform: iOS
+    sources:
+      - AgedCareApp/Sources
+      - AgedCareApp/Assets.xcassets
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.agedcare.app
+      SWIFT_VERSION: "5.9"
+      INFOPLIST_FILE: AgedCareApp/Info.plist
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - package: AgedCareShared
+    entitlements:
+      path: AgedCareApp/AgedCareApp.entitlements
+
+  AgedCareAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - AgedCareApp/Tests
+    dependencies:
+      - target: AgedCareApp
+      - package: AgedCareShared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.agedcare.app.tests
+      SWIFT_VERSION: "5.9"
+      GENERATE_INFOPLIST_FILE: YES
+      CODE_SIGNING_STYLE: Automatic
+      CODE_SIGNING_ALLOWED: NO
+
+  NotificationServiceExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - NotificationService
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.agedcare.app.notification-service
+      SWIFT_VERSION: "5.9"
+      INFOPLIST_FILE: NotificationService/Info.plist
+    dependencies:
+      - target: AgedCareApp
