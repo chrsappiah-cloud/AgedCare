@@ -88,13 +88,14 @@ def rpc_handler(rpc_name):
     try:
         if rpc_name == "get_open_alerts_for_facility":
             rows = q(conn,
-                "SELECT id, resident_id, type, status, priority, created_at "
-                "FROM public.alerts WHERE facility_id = :fid AND status = 'open' "
+                "SELECT id, resident_id, type, status, priority, created_at, assigned_to "
+                "FROM public.alerts WHERE facility_id = :fid AND status IN ('open', 'ack') "
                 "ORDER BY priority DESC, created_at DESC",
                 fid=body["p_facility_id"])
             return json_response([{
                 "id": r[0], "resident_id": str(r[1]), "type": r[2],
                 "status": r[3], "priority": r[4], "created_at": r[5].isoformat(),
+                "assigned_to": str(r[6]) if r[6] else None,
             } for r in rows])
 
         elif rpc_name == "create_fall_alert":
@@ -219,8 +220,20 @@ def health():
 def index():
     return {"service": "AgedCare Local Backend", "version": "1.0.0", "endpoints": [
         "POST /auth/v1/token", "GET /auth/v1/user",
-        "POST /rest/v1/rpc/<name>", "GET /health",
+        "POST /rest/v1/rpc/<name>", "GET /health", "GET /facility",
     ]}
+
+
+@route("/facility", method="GET")
+def get_facility():
+    conn = get_db()
+    try:
+        rows = q(conn, "SELECT id, name, code FROM public.facilities LIMIT 1")
+        if rows:
+            return json_response({"id": str(rows[0][0]), "name": rows[0][1], "code": rows[0][2]})
+        return json_response({"error": "no facility"}, status=404)
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":

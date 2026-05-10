@@ -7,6 +7,7 @@ public struct AlertModel: Identifiable, Decodable {
   public let status: String
   public let priority: Int
   public let createdAt: Date
+  public let assignedStaffId: UUID?
 
   enum CodingKeys: String, CodingKey {
     case id
@@ -15,6 +16,7 @@ public struct AlertModel: Identifiable, Decodable {
     case status
     case priority
     case createdAt = "created_at"
+    case assignedStaffId = "assigned_to"
   }
 }
 

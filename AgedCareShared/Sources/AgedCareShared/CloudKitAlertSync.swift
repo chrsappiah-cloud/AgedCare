@@ -77,7 +77,8 @@ public final class CloudKitAlertSync: @unchecked Sendable {
       type: type,
       status: status,
       priority: priority,
-      createdAt: createdAt
+      createdAt: createdAt,
+      assignedStaffId: nil
     )
   }
 

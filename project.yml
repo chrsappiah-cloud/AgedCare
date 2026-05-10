@@ -20,6 +20,7 @@ targets:
       SWIFT_VERSION: "5.9"
       INFOPLIST_FILE: AgedCareApp/Info.plist
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      DEVELOPMENT_TEAM: TM2WG7HH96
     dependencies:
       - package: AgedCareShared
     entitlements:
@@ -63,5 +64,6 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: com.agedcare.app.notification-service
       SWIFT_VERSION: "5.9"
       INFOPLIST_FILE: NotificationService/Info.plist
+      DEVELOPMENT_TEAM: TM2WG7HH96
     dependencies:
       - target: AgedCareApp

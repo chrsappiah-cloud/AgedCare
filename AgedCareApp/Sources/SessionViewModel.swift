@@ -5,7 +5,7 @@ final class SessionViewModel: ObservableObject {
   @Published var state: SessionState = .onboarding
   @Published var loginError: String?
 
-  private let baseURL = URL(string: "http://localhost:8081")!
+  private let baseURL = AppHost.baseURL
 
   func setResident(facilityId: UUID, residentId: UUID) {
     state = .resident(facilityId: facilityId, residentId: residentId)
@@ -34,7 +34,9 @@ final class SessionViewModel: ObservableObject {
       SupabaseAuthStore.shared.accessToken = loginResp.accessToken
 
       // 2. Fetch staff info
-      let userId = UUID(uuidString: loginResp.user.id)!
+      guard let userId = UUID(uuidString: loginResp.user.id) else {
+        throw LoginError.invalidResponse("Invalid user ID format")
+      }
       var rpcReq = URLRequest(url: baseURL.appendingPathComponent("/rest/v1/rpc/get_staff_info"))
       rpcReq.httpMethod = "POST"
       rpcReq.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -48,9 +50,12 @@ final class SessionViewModel: ObservableObject {
       }
 
       let staffInfo = try JSONDecoder().decode(StaffInfoResponse.self, from: staffData)
+      guard let facilityId = UUID(uuidString: staffInfo.facilityId) else {
+        throw LoginError.invalidResponse("Invalid facility ID format")
+      }
       let staff = StaffUserModel(
         id: userId,
-        facilityId: UUID(uuidString: staffInfo.facilityId)!,
+        facilityId: facilityId,
         role: staffInfo.role,
         displayName: staffInfo.displayName,
         email: loginResp.user.email
@@ -75,11 +80,13 @@ final class SessionViewModel: ObservableObject {
 enum LoginError: LocalizedError {
   case invalidCredentials
   case staffNotFound
+  case invalidResponse(String)
 
   var errorDescription: String? {
     switch self {
     case .invalidCredentials: return "Invalid email or password"
     case .staffNotFound: return "Staff account not found"
+    case .invalidResponse(let msg): return "Server error: \(msg)"
     }
   }
 }

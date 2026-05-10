@@ -9,15 +9,19 @@
 /* Begin PBXBuildFile section */
 		070AD30F9B014D0D25986568 /* ResidentHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB693392F281D26C9D0D99DE /* ResidentHomeView.swift */; };
 		08FEA75FA4F6AB3F172ABD98 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0A8DA48915515D1154BF7 /* Models.swift */; };
+		257C54BDE82D34FBEC9FBA8D /* AgedCareSharedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC565CC77B232C9CBFF258AF /* AgedCareSharedTests.swift */; };
 		26EFC90AC83F4617BEA09BD8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233372C4DA6169838274BD54 /* NotificationService.swift */; };
 		4274D1422BAA55C5CE59A51A /* ResidentSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F0BD40E61029044DC639CC /* ResidentSetupView.swift */; };
+		45DD9DE6B898642C3B5C10FA /* AgedCareShared in Frameworks */ = {isa = PBXBuildFile; productRef = A86978547DBC875F51F7B784 /* AgedCareShared */; };
 		540BD623D11D4374944B0D32 /* SessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9127BE17E04F504389592A14 /* SessionViewModel.swift */; };
 		59AA161EE02488860AD632F7 /* StaffShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF855E4405295E0E01B362E3 /* StaffShellView.swift */; };
+		5ED4872035B00242290FBC44 /* AppHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8DEC219C5DE5A264B5427 /* AppHost.swift */; };
 		60A9A9585E93724F9634F6E5 /* AlertsHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E73FEE58BD6111FF24862 /* AlertsHomeView.swift */; };
 		65DD53A7E2B45F693FC6CD9C /* AgedCareShared in Frameworks */ = {isa = PBXBuildFile; productRef = BEA29CF9F8E7A2BDCBF855E1 /* AgedCareShared */; };
 		726C07904EC970AF10F6BD27 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7CE459623A0B893624FD91 /* LoginView.swift */; };
 		751252C82767EE669BD0737A /* AgedCareApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0099097EC929ED72F622F6FF /* AgedCareApp.swift */; };
 		75FD06BB369ACCE6D73AE029 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB70D99FE22C3E08E32EA3 /* RootView.swift */; };
+		859635F9A0C1B60F6E8F9BDF /* RepositoryIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1FD21FBBE6ED602784F5DF /* RepositoryIntegrationTests.swift */; };
 		8C492307DD9159476C98A974 /* ResidentsHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABBF8789B1E255AFC000FFA /* ResidentsHomeView.swift */; };
 		9BAD44BE5D29F4C742B76690 /* AgedCareShared in Frameworks */ = {isa = PBXBuildFile; productRef = 5332A5EFF3807AB53B0D5D73 /* AgedCareShared */; };
 		A8B5E8841FD3CD65F3021E00 /* AlertViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2668509934514A5A2E0DFB8 /* AlertViewModelTests.swift */; };
@@ -52,8 +56,10 @@
 
 /* Begin PBXFileReference section */
 		0099097EC929ED72F622F6FF /* AgedCareApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgedCareApp.swift; sourceTree = "<group>"; };
+		0D1FD21FBBE6ED602784F5DF /* RepositoryIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryIntegrationTests.swift; sourceTree = "<group>"; };
 		1C47C5EFF0CFBDA29C62B361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		233372C4DA6169838274BD54 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		35B8DEC219C5DE5A264B5427 /* AppHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHost.swift; sourceTree = "<group>"; };
 		420B2D1C663B269CE96137C0 /* AgedCareApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AgedCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		477D2831B83E1212274C2680 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		4DAB70D99FE22C3E08E32EA3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -66,8 +72,10 @@
 		9D7CE459623A0B893624FD91 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		A4FA258CC319A972F5C7E609 /* AgedCareShared */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AgedCareShared; path = AgedCareShared; sourceTree = SOURCE_ROOT; };
 		AF855E4405295E0E01B362E3 /* StaffShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffShellView.swift; sourceTree = "<group>"; };
+		B290FC016377911D5774A7A6 /* AgedCareSharedTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AgedCareSharedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D7F081AF57DC88B26890C4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BAA3CD648D069C0E7CBB7DDA /* AgedCareAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AgedCareAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC565CC77B232C9CBFF258AF /* AgedCareSharedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgedCareSharedTests.swift; sourceTree = "<group>"; };
 		BD6254AF2799FE5A97A1F5B5 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		BE40E5A4495EC6EB277BE72A /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2668509934514A5A2E0DFB8 /* AlertViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModelTests.swift; sourceTree = "<group>"; };
@@ -86,6 +94,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				65DD53A7E2B45F693FC6CD9C /* AgedCareShared in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB66ED89C245B734C65CE119 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45DD9DE6B898642C3B5C10FA /* AgedCareShared in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +140,7 @@
 				D364440BDAC8FF0589DEBD91 /* AlertDetailView.swift */,
 				E29E73FEE58BD6111FF24862 /* AlertsHomeView.swift */,
 				8F1A4530DC4597C340DA63C0 /* AlertViewModel.swift */,
+				35B8DEC219C5DE5A264B5427 /* AppHost.swift */,
 				477D2831B83E1212274C2680 /* DependencyContainer.swift */,
 				BD6254AF2799FE5A97A1F5B5 /* InsightsView.swift */,
 				9D7CE459623A0B893624FD91 /* LoginView.swift */,
@@ -152,6 +169,16 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		9988915CF39901D7C0490C20 /* AgedCareSharedTests */ = {
+			isa = PBXGroup;
+			children = (
+				BC565CC77B232C9CBFF258AF /* AgedCareSharedTests.swift */,
+				0D1FD21FBBE6ED602784F5DF /* RepositoryIntegrationTests.swift */,
+			);
+			name = AgedCareSharedTests;
+			path = AgedCareShared/Tests/AgedCareSharedTests;
+			sourceTree = "<group>";
+		};
 		A9B1CE1E35DF94F30D48A111 /* NotificationService */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +193,7 @@
 			children = (
 				420B2D1C663B269CE96137C0 /* AgedCareApp.app */,
 				BAA3CD648D069C0E7CBB7DDA /* AgedCareAppTests.xctest */,
+				B290FC016377911D5774A7A6 /* AgedCareSharedTests.xctest */,
 				BE40E5A4495EC6EB277BE72A /* NotificationServiceExtension.appex */,
 			);
 			name = Products;
@@ -175,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				49B026BD6AB4153742123C2F /* AgedCareApp */,
+				9988915CF39901D7C0490C20 /* AgedCareSharedTests */,
 				A9B1CE1E35DF94F30D48A111 /* NotificationService */,
 				86BEF7D2B5292A026F590534 /* Packages */,
 				82F790640A42EC9558C67A49 /* Sources */,
@@ -186,6 +215,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AEF5B52EF0E0C2056B22AF80 /* AgedCareSharedTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 896130845CAD82FF9E56B356 /* Build configuration list for PBXNativeTarget "AgedCareSharedTests" */;
+			buildPhases = (
+				AE9B8181EC27717FC86FD91B /* Sources */,
+				EB66ED89C245B734C65CE119 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AgedCareSharedTests;
+			packageProductDependencies = (
+				A86978547DBC875F51F7B784 /* AgedCareShared */,
+			);
+			productName = AgedCareSharedTests;
+			productReference = B290FC016377911D5774A7A6 /* AgedCareSharedTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CB51ADEC6AF557A949E193E6 /* AgedCareApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A0019541110FCEC765409AF /* Build configuration list for PBXNativeTarget "AgedCareApp" */;
@@ -253,6 +301,12 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					CB51ADEC6AF557A949E193E6 = {
+						DevelopmentTeam = TM2WG7HH96;
+					};
+					EA72435DB264E66F0A2764B1 = {
+						DevelopmentTeam = TM2WG7HH96;
+					};
 				};
 			};
 			buildConfigurationList = 142F52D89FBDE69C10C136D8 /* Build configuration list for PBXProject "AgedCare" */;
@@ -274,6 +328,7 @@
 			targets = (
 				CB51ADEC6AF557A949E193E6 /* AgedCareApp */,
 				DB547019E3417B2F95230345 /* AgedCareAppTests */,
+				AEF5B52EF0E0C2056B22AF80 /* AgedCareSharedTests */,
 				EA72435DB264E66F0A2764B1 /* NotificationServiceExtension */,
 			);
 		};
@@ -299,6 +354,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AE9B8181EC27717FC86FD91B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				257C54BDE82D34FBEC9FBA8D /* AgedCareSharedTests.swift in Sources */,
+				859635F9A0C1B60F6E8F9BDF /* RepositoryIntegrationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8972414A543F9534A7079CF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -315,6 +379,7 @@
 				AF11DB4B058BEA0E05B71F02 /* AlertDetailView.swift in Sources */,
 				B2A8DADDFD66B7BABB4C7D31 /* AlertViewModel.swift in Sources */,
 				60A9A9585E93724F9634F6E5 /* AlertsHomeView.swift in Sources */,
+				5ED4872035B00242290FBC44 /* AppHost.swift in Sources */,
 				B88C76AC0B9F684C2716C9D1 /* DependencyContainer.swift in Sources */,
 				F9E90D07DA9BE34DA85AEB0A /* InsightsView.swift in Sources */,
 				726C07904EC970AF10F6BD27 /* LoginView.swift in Sources */,
@@ -372,6 +437,7 @@
 		0FE7599ADFE46CF8DC5E588B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = TM2WG7HH96;
 				INFOPLIST_FILE = NotificationService/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -391,6 +457,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = AgedCareApp/AgedCareApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TM2WG7HH96;
 				INFOPLIST_FILE = AgedCareApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -486,6 +553,44 @@
 			};
 			name = Debug;
 		};
+		688DC83D0BB2FCAAF0A1E783 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.agedcare.shared.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7F9D7680926D4D793ACD9186 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.agedcare.shared.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		BD93D90D9E6A1B2C509F1DA5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -545,6 +650,7 @@
 		D3D8BF0477BAA57EE188E309 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = TM2WG7HH96;
 				INFOPLIST_FILE = NotificationService/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -564,6 +670,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = AgedCareApp/AgedCareApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TM2WG7HH96;
 				INFOPLIST_FILE = AgedCareApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -597,6 +704,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		896130845CAD82FF9E56B356 /* Build configuration list for PBXNativeTarget "AgedCareSharedTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F9D7680926D4D793ACD9186 /* Debug */,
+				688DC83D0BB2FCAAF0A1E783 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		BA3A9F4C515D59D1B6D0B9C9 /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -626,6 +742,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		5332A5EFF3807AB53B0D5D73 /* AgedCareShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AgedCareShared;
+		};
+		A86978547DBC875F51F7B784 /* AgedCareShared */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AgedCareShared;
 		};

@@ -20,7 +20,7 @@ final class AlertViewModel: ObservableObject {
     case .all:
       return alerts
     case .assignedToMe:
-      return alerts
+      return alerts.filter { $0.assignedStaffId == staffId }
     case .falls:
       return alerts.filter { $0.type.lowercased() == "fall" }
     case .vitals:
@@ -28,16 +28,13 @@ final class AlertViewModel: ObservableObject {
     }
   }
 
-  private(set) var alertsRepository: AlertsRepositoryProtocol
+  var alertsRepository: AlertsRepositoryProtocol?
   private let facilityId: UUID
+  private let staffId: UUID
 
-  init(alertsRepository: AlertsRepositoryProtocol, facilityId: UUID) {
-    self.alertsRepository = alertsRepository
+  init(facilityId: UUID, staffId: UUID) {
     self.facilityId = facilityId
-  }
-
-  func replaceRepository(with repo: AlertsRepositoryProtocol) {
-    alertsRepository = repo
+    self.staffId = staffId
   }
 
   func loadAlerts() async {
@@ -45,19 +42,25 @@ final class AlertViewModel: ObservableObject {
     loadError = nil
     defer { isLoading = false }
     do {
-      alerts = try await alertsRepository.getOpenAlerts(facilityId: facilityId)
+      guard let repo = alertsRepository else {
+        loadError = "Repository not initialized"
+        return
+      }
+      alerts = try await repo.getOpenAlerts(facilityId: facilityId)
     } catch {
       loadError = error.localizedDescription
     }
   }
 
   func acknowledge(alertId: Int64, staffId: UUID) async throws {
-    try await alertsRepository.acknowledgeAlert(alertId: alertId, staffId: staffId)
+    guard let repo = alertsRepository else { return }
+    try await repo.acknowledgeAlert(alertId: alertId, staffId: staffId)
     try await loadAlerts()
   }
 
   func close(alertId: Int64, notes: String) async throws {
-    try await alertsRepository.closeAlert(alertId: alertId, notes: notes)
+    guard let repo = alertsRepository else { return }
+    try await repo.closeAlert(alertId: alertId, notes: notes)
     try await loadAlerts()
   }
 }

@@ -9,8 +9,8 @@ struct AlertsHomeView: View {
   init(staff: StaffUserModel) {
     self.staff = staff
     _vm = StateObject(wrappedValue: AlertViewModel(
-      alertsRepository: DummyAlertsRepository(),
-      facilityId: staff.facilityId
+      facilityId: staff.facilityId,
+      staffId: staff.id
     ))
   }
 
@@ -28,10 +28,10 @@ struct AlertsHomeView: View {
           }
         }
       }
+      .onAppear {
+        vm.alertsRepository = container.alertsRepository
+      }
       .task {
-        if vm.alertsRepository !== container.alertsRepository {
-          vm.replaceRepository(with: container.alertsRepository)
-        }
         await vm.loadAlerts()
       }
     }
@@ -124,10 +124,3 @@ extension AlertModel {
   }
 }
 
-final class DummyAlertsRepository: AlertsRepositoryProtocol {
-  func createFallAlert(facilityId: UUID, residentId: UUID, priority: Int) async throws -> Int64 { 0 }
-  func createSOSAlert(facilityId: UUID, residentId: UUID) async throws -> Int64 { 0 }
-  func getOpenAlerts(facilityId: UUID) async throws -> [AlertModel] { [] }
-  func acknowledgeAlert(alertId: Int64, staffId: UUID) async throws {}
-  func closeAlert(alertId: Int64, notes: String) async throws {}
-}

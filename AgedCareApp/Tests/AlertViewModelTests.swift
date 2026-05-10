@@ -40,9 +40,10 @@ struct AlertViewModelTests {
   func loadAlertsSuccess() async throws {
     let mock = MockAlertRepository()
     mock.alerts = [
-      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date()),
+      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date(), assignedStaffId: nil),
     ]
-    let vm = AlertViewModel(alertsRepository: mock, facilityId: UUID())
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
+    vm.alertsRepository = mock
     #expect(vm.alerts.isEmpty)
     #expect(!vm.isLoading)
 
@@ -61,7 +62,8 @@ struct AlertViewModelTests {
     }
     let mock = MockAlertRepository()
     mock.error = TestError()
-    let vm = AlertViewModel(alertsRepository: mock, facilityId: UUID())
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
+    vm.alertsRepository = mock
 
     await vm.loadAlerts()
 
@@ -70,24 +72,32 @@ struct AlertViewModelTests {
     #expect(vm.isLoading == false)
   }
 
+  @Test("loadAlerts no-ops without repo")
+  func loadAlertsNoRepo() async throws {
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
+    #expect(vm.alertsRepository == nil)
+
+    await vm.loadAlerts()
+
+    #expect(vm.loadError == "Repository not initialized")
+  }
+
   @Test("filteredAlerts returns all by default")
   func filterAll() {
-    let mock = MockAlertRepository()
-    let vm = AlertViewModel(alertsRepository: mock, facilityId: UUID())
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
     vm.alerts = [
-      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date()),
-      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date()),
+      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date(), assignedStaffId: nil),
+      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date(), assignedStaffId: nil),
     ]
     #expect(vm.filteredAlerts.count == 2)
   }
 
   @Test("filteredAlerts filters falls")
   func filterFalls() {
-    let mock = MockAlertRepository()
-    let vm = AlertViewModel(alertsRepository: mock, facilityId: UUID())
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
     vm.alerts = [
-      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date()),
-      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date()),
+      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date(), assignedStaffId: nil),
+      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date(), assignedStaffId: nil),
     ]
     vm.filter = .falls
     #expect(vm.filteredAlerts.count == 1)
@@ -96,26 +106,38 @@ struct AlertViewModelTests {
 
   @Test("filteredAlerts filters vitals")
   func filterVitals() {
-    let mock = MockAlertRepository()
-    let vm = AlertViewModel(alertsRepository: mock, facilityId: UUID())
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
     vm.alerts = [
-      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date()),
-      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date()),
-      AlertModel(id: 3, residentId: UUID(), type: "manualSOS", status: "open", priority: 1, createdAt: Date()),
+      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "open", priority: 3, createdAt: Date(), assignedStaffId: nil),
+      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date(), assignedStaffId: nil),
+      AlertModel(id: 3, residentId: UUID(), type: "manualSOS", status: "open", priority: 1, createdAt: Date(), assignedStaffId: nil),
     ]
     vm.filter = .vitals
     #expect(vm.filteredAlerts.count == 1)
     #expect(vm.filteredAlerts[0].type == "vitaltrend")
   }
 
-  @Test("replaceRepository swaps repository")
-  func replaceRepo() {
-    let mock1 = MockAlertRepository()
-    let mock2 = MockAlertRepository()
-    let vm = AlertViewModel(alertsRepository: mock1, facilityId: UUID())
-    #expect(vm.alertsRepository as? MockAlertRepository === mock1)
+  @Test("filteredAlerts filters assigned to me")
+  func filterAssignedToMe() {
+    let staffId = UUID()
+    let vm = AlertViewModel(facilityId: UUID(), staffId: staffId)
+    vm.alerts = [
+      AlertModel(id: 1, residentId: UUID(), type: "fall", status: "ack", priority: 3, createdAt: Date(), assignedStaffId: staffId),
+      AlertModel(id: 2, residentId: UUID(), type: "vitaltrend", status: "open", priority: 2, createdAt: Date(), assignedStaffId: nil),
+      AlertModel(id: 3, residentId: UUID(), type: "manualSOS", status: "ack", priority: 1, createdAt: Date(), assignedStaffId: UUID()),
+    ]
+    vm.filter = .assignedToMe
+    #expect(vm.filteredAlerts.count == 1)
+    #expect(vm.filteredAlerts[0].id == 1)
+  }
 
-    vm.replaceRepository(with: mock2)
-    #expect(vm.alertsRepository as? MockAlertRepository === mock2)
+  @Test("setting repo enables loads")
+  func setRepo() {
+    let mock1 = MockAlertRepository()
+    let vm = AlertViewModel(facilityId: UUID(), staffId: UUID())
+    #expect(vm.alertsRepository == nil)
+
+    vm.alertsRepository = mock1
+    #expect(vm.alertsRepository as? MockAlertRepository === mock1)
   }
 }

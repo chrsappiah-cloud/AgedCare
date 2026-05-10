@@ -18,10 +18,16 @@ struct SettingsView: View {
         }
 
         Section {
-          Button("Report a problem", systemImage: "exclamationmark.bubble") {
-            reportProblem()
+          NavigationLink(destination: Text("Report a problem – contact support\nsupport@agedcare.app")
+            .multilineTextAlignment(.center)
+            .padding()) {
+            Label("Report a problem", systemImage: "exclamationmark.bubble")
           }
-          Button("Legal & privacy", systemImage: "shield") {}
+          NavigationLink(destination: Text("Legal & Privacy\n\nAgedCare App v1.0\n© 2026 AgedCare Inc.")
+            .multilineTextAlignment(.center)
+            .padding()) {
+            Label("Legal & privacy", systemImage: "shield")
+          }
           Button("Sign out", systemImage: "arrow.backward.circle", role: .destructive) {
             session.logout()
           }
@@ -31,13 +37,4 @@ struct SettingsView: View {
     }
   }
 
-  private func reportProblem() {
-    Task {
-      try? await container.alertsRepository.createFallAlert(
-        facilityId: staff.facilityId,
-        residentId: UUID(),
-        priority: 1
-      )
-    }
-  }
 }
