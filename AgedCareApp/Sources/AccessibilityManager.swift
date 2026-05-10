@@ -18,25 +18,23 @@ final class AccessibilityManager: ObservableObject {
   private init() {
     let center = NotificationCenter.default
     observers = [
-      center.addObserver(forName: UIAccessibility.voiceOverStatusDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.isVoiceOverRunning = UIAccessibility.isVoiceOverRunning
+      center.addObserver(forName: UIAccessibility.voiceOverStatusDidChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.isVoiceOverRunning = UIAccessibility.isVoiceOverRunning }
       },
-      center.addObserver(forName: UIAccessibility.reduceMotionStatusDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.isReduceMotionEnabled = UIAccessibility.isReduceMotionEnabled
+      center.addObserver(forName: UIAccessibility.reduceMotionStatusDidChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.isReduceMotionEnabled = UIAccessibility.isReduceMotionEnabled }
       },
-      center.addObserver(forName: UIAccessibility.reduceTransparencyStatusDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.isReduceTransparencyEnabled = UIAccessibility.isReduceTransparencyEnabled
+      center.addObserver(forName: UIAccessibility.reduceTransparencyStatusDidChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.isReduceTransparencyEnabled = UIAccessibility.isReduceTransparencyEnabled }
       },
-      center.addObserver(forName: UIAccessibility.boldTextStatusDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.isBoldTextEnabled = UIAccessibility.isBoldTextEnabled
+      center.addObserver(forName: UIAccessibility.boldTextStatusDidChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.isBoldTextEnabled = UIAccessibility.isBoldTextEnabled }
       },
-      // UIAccessibility.darkerSystemColorsDidChangeNotification not available on all iOS versions
-      // isHighContrastEnabled is set at init time only
-      center.addObserver(forName: UIAccessibility.buttonShapesEnabledStatusDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.isButtonShapesEnabled = UIAccessibility.buttonShapesEnabled
+      center.addObserver(forName: UIAccessibility.buttonShapesEnabledStatusDidChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.isButtonShapesEnabled = UIAccessibility.buttonShapesEnabled }
       },
-      center.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-        self?.preferredContentSizeCategory = UIApplication.shared.preferredContentSizeCategory
+      center.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: .main) { _ in
+        Task { @MainActor in AccessibilityManager.shared.preferredContentSizeCategory = UIApplication.shared.preferredContentSizeCategory }
       },
     ]
   }

@@ -11,11 +11,12 @@ struct LoginView: View {
 
       Image(systemName: "person.fill.badge.shield.checkmark")
         .font(.system(size: 60))
-        .foregroundStyle(.tint)
+        .foregroundColor(AppTheme.emeraldGreen)
         .accessibilityHidden(true)
 
       Text("Staff Sign In")
         .font(.title.bold())
+        .foregroundColor(AppTheme.textPrimary)
         .accessibilityAddTraits(.isHeader)
 
       TextField("Email", text: $email)
@@ -23,22 +24,24 @@ struct LoginView: View {
         .autocapitalization(.none)
         .keyboardType(.emailAddress)
         .padding(12)
-        .background(Color(.systemGray6))
+        .background(AppTheme.diamondSilver.opacity(0.25))
         .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppTheme.diamondSilver, lineWidth: 1))
         .accessibilityLabel("Email address")
         .accessibilityHint("Enter your email address to sign in")
 
       SecureField("Password", text: $password)
         .textContentType(.password)
         .padding(12)
-        .background(Color(.systemGray6))
+        .background(AppTheme.diamondSilver.opacity(0.25))
         .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppTheme.diamondSilver, lineWidth: 1))
         .accessibilityLabel("Password")
         .accessibilityHint("Enter your password")
 
       if let error = session.loginError {
         Text(error)
-          .foregroundColor(.red)
+          .foregroundColor(AppTheme.danger)
           .font(.callout)
           .accessibilityLabel("Login error: \(error)")
       }
@@ -47,18 +50,16 @@ struct LoginView: View {
         Task { await session.login(email: email, password: password) }
       }) {
         Text("Sign In")
-          .font(.headline)
-          .padding()
-          .frame(maxWidth: .infinity)
+          .primaryButtonStyle()
       }
-      .buttonStyle(.borderedProminent)
       .disabled(email.isEmpty || password.isEmpty)
+      .opacity(email.isEmpty || password.isEmpty ? 0.5 : 1)
       .accessibilityHint("Signs you in with your email and password")
       .accessibilityIdentifier("sign_in_button")
 
       Text("Demo Access")
         .font(.subheadline.bold())
-        .foregroundColor(.secondary)
+        .foregroundColor(AppTheme.darkChocolateLight)
         .padding(.top, 8)
         .accessibilityAddTraits(.isHeader)
 
@@ -72,12 +73,14 @@ struct LoginView: View {
       Button(action: { session.state = .onboarding }) {
         Text("Back")
           .font(.subheadline)
+          .foregroundColor(AppTheme.emeraldGreen)
       }
       .accessibilityHint("Returns to the setup screen")
 
       Spacer()
     }
     .padding(32)
+    .background(AppTheme.background)
     .accessibilityElement(children: .contain)
   }
 }
@@ -95,21 +98,24 @@ private struct DemoButton: View {
       HStack {
         Image(systemName: "person.circle.fill")
           .font(.caption)
+          .foregroundColor(AppTheme.emeraldGreen)
           .accessibilityHidden(true)
         Text(title)
           .font(.caption)
+          .foregroundColor(AppTheme.textPrimary)
         Spacer()
         Text("Tap")
           .font(.caption2.bold())
+          .foregroundColor(AppTheme.textOnPrimary)
           .padding(.horizontal, 10)
           .padding(.vertical, 4)
-          .background(Color.accentColor.opacity(0.2))
+          .background(AppTheme.emeraldGreen)
           .cornerRadius(6)
           .accessibilityHidden(true)
       }
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(Color(.systemGray6))
+      .background(AppTheme.diamondSilver.opacity(0.2))
       .cornerRadius(8)
     }
     .buttonStyle(.plain)

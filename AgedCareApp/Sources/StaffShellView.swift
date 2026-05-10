@@ -41,6 +41,7 @@ struct StaffShellView: View {
         }
         .accessibilityLabel("Settings tab")
     }
+    .tint(AppTheme.emeraldGreen)
     .accessibilityLabel("Main tabs")
     .overlay(alignment: .top) { handoffBanner }
     .onChange(of: handoff.pendingHandoff) { _, newValue in
@@ -70,8 +71,8 @@ struct StaffShellView: View {
             .font(.caption)
         }
         .padding(12)
-        .background(Color.orange.opacity(0.9))
-        .foregroundColor(.white)
+        .background(AppTheme.gradientEmeraldRed)
+        .foregroundColor(AppTheme.textOnPrimary)
         .cornerRadius(12)
         .padding(.horizontal)
         .padding(.top, 6)
@@ -105,22 +106,24 @@ struct HandoffRequestView: View {
       Spacer()
       Image(systemName: "bell.and.waves.left.and.right.fill")
         .font(.system(size: 60))
-        .foregroundColor(.orange)
+        .foregroundColor(AppTheme.emeraldRed)
 
       Text("Assistance Requested")
         .font(.title.bold())
+        .foregroundColor(AppTheme.textPrimary)
 
       VStack(spacing: 8) {
         Label(residentName, systemImage: "person.fill")
           .font(.headline)
+          .foregroundColor(AppTheme.textPrimary)
         Label("Facility: \(facilityId.prefix(8))", systemImage: "building.2.fill")
           .font(.subheadline)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
       }
 
       Text("This resident has requested a staff member to check on them.")
         .multilineTextAlignment(.center)
-        .foregroundColor(.secondary)
+        .foregroundColor(AppTheme.textSecondary)
 
       Spacer()
 
@@ -137,12 +140,8 @@ struct HandoffRequestView: View {
           dismiss()
         }) {
           Label("Respond to \(residentName)", systemImage: "person.fill.checkmark")
-            .font(.headline)
-            .padding()
-            .frame(maxWidth: .infinity)
+            .primaryButtonStyle()
         }
-        .buttonStyle(.borderedProminent)
-        .tint(.green)
         .accessibilityHint("Marks this request as handled and notifies the resident")
 
         Button(role: .cancel) {
@@ -151,9 +150,11 @@ struct HandoffRequestView: View {
         } label: {
           Text("Dismiss")
             .font(.subheadline)
+            .foregroundColor(AppTheme.textSecondary)
         }
       }
     }
     .padding(32)
+    .background(AppTheme.background)
   }
 }

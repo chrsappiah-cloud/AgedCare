@@ -25,6 +25,7 @@ struct AlertsHomeView: View {
         ToolbarItem(placement: .navigationBarTrailing) {
           Button { Task { await vm.loadAlerts() } } label: {
             Image(systemName: "arrow.clockwise")
+              .foregroundColor(AppTheme.emeraldGreen)
           }
           .accessibilityLabel("Refresh alerts")
           .accessibilityHint("Reloads the alert list")
@@ -36,6 +37,7 @@ struct AlertsHomeView: View {
       .task {
         await vm.loadAlerts()
       }
+      .background(AppTheme.background)
       .accessibilityElement(children: .contain)
     }
   }
@@ -57,12 +59,16 @@ struct AlertsHomeView: View {
   private func filterChip(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       Text(title)
-        .font(.caption)
-        .padding(.horizontal, 12)
+        .font(.caption.bold())
+        .padding(.horizontal, 14)
         .padding(.vertical, 6)
-        .background(selected ? Color.accentColor : Color(.secondarySystemBackground))
-        .foregroundColor(selected ? .white : .primary)
-        .cornerRadius(999)
+        .background(selected ? AppTheme.emeraldGreen : AppTheme.diamondSilver.opacity(0.4))
+        .foregroundColor(selected ? AppTheme.textOnPrimary : AppTheme.textSecondary)
+        .cornerRadius(20)
+        .overlay(
+          RoundedRectangle(cornerRadius: 20)
+            .stroke(selected ? AppTheme.emeraldGreen : Color.clear, lineWidth: 1)
+        )
     }
     .accessibilityLabel("\(title) filter")
     .accessibilityValue(selected ? "Selected" : "Not selected")
@@ -77,16 +83,31 @@ struct AlertsHomeView: View {
         RichAlertRow(alert: alert)
       }
     }
+    .scrollContentBackground(.hidden)
     .overlay {
       if vm.isLoading {
         ProgressView("Loading\u{2026}")
+          .tint(AppTheme.emeraldGreen)
           .accessibilityLabel("Loading alerts")
       } else if let error = vm.loadError {
-        Text(error).foregroundColor(.red).padding()
-          .accessibilityLabel("Error loading alerts: \(error)")
+        VStack(spacing: 8) {
+          Image(systemName: "exclamationmark.triangle.fill")
+            .font(.title2)
+            .foregroundColor(AppTheme.danger)
+          Text(error)
+            .foregroundColor(AppTheme.danger)
+            .padding()
+        }
+        .accessibilityLabel("Error loading alerts: \(error)")
       } else if vm.filteredAlerts.isEmpty {
-        Text("No alerts").foregroundColor(.secondary)
-          .accessibilityLabel("No alerts to show")
+        VStack(spacing: 8) {
+          Image(systemName: "checkmark.circle.fill")
+            .font(.title2)
+            .foregroundColor(AppTheme.emeraldGreen)
+          Text("No alerts")
+            .foregroundColor(AppTheme.textSecondary)
+        }
+        .accessibilityLabel("No alerts to show")
       }
     }
     .accessibilityLabel("Alert list")
@@ -103,13 +124,15 @@ struct RichAlertRow: View {
         HStack {
           Text("Resident \(alert.residentId.uuidString.prefix(6))")
             .font(.headline)
+            .foregroundColor(AppTheme.textPrimary)
           Spacer()
           Text(alert.createdAt, style: .time)
             .font(.caption)
-            .foregroundColor(.secondary)
+            .foregroundColor(AppTheme.textSecondary)
         }
         Text(alert.typeDisplay)
           .font(.subheadline)
+          .foregroundColor(AppTheme.textSecondary)
       }
     }
     .padding(.vertical, 6)
@@ -121,9 +144,17 @@ struct RichAlertRow: View {
 
   private var priorityIndicator: some View {
     RoundedRectangle(cornerRadius: 4)
-      .fill(alert.priorityColor)
+      .fill(priorityColor)
       .frame(width: 6)
       .accessibilityHidden(true)
+  }
+
+  private var priorityColor: Color {
+    switch alert.priority {
+    case 3: return AppTheme.emeraldRed
+    case 2: return AppTheme.warning
+    default: return AppTheme.emeraldGreen
+    }
   }
 }
 
@@ -132,16 +163,16 @@ extension AlertModel {
     switch type.lowercased() {
     case "fall": return "Possible fall"
     case "vitaltrend": return "Vital sign trend"
+    case "handoff_request": return "Staff assistance"
     default: return type.capitalized
     }
   }
 
   var priorityColor: Color {
     switch priority {
-    case 3: return .red
-    case 2: return .orange
-    default: return .yellow
+    case 3: return Color.red
+    case 2: return Color.orange
+    default: return Color.yellow
     }
   }
 }
-

@@ -14,13 +14,16 @@ struct WatchPreviewView: View {
         .clipShape(RoundedRectangle(cornerRadius: 44))
         .overlay(
           RoundedRectangle(cornerRadius: 44)
-            .stroke(Color(.systemGray3), lineWidth: 2)
+            .stroke(AppTheme.diamondSilver, lineWidth: 2)
         )
-        .shadow(radius: 10)
+        .shadow(color: AppTheme.darkChocolate.opacity(0.2), radius: 12)
       watchControls
     }
     .padding()
+    .background(AppTheme.background)
     .navigationTitle("Watch Preview")
+    .accessibilityLabel("Apple Watch Preview")
+    .accessibilityHint("Simulates an Apple Watch interface for testing")
   }
 
   private let watchSize = CGSize(width: 180, height: 215)
@@ -28,21 +31,21 @@ struct WatchPreviewView: View {
   private var watchHeader: some View {
     HStack {
       Circle()
-        .fill(vm.isWatchReachable ? .green : .red)
+        .fill(vm.isWatchReachable ? AppTheme.emeraldGreen : AppTheme.emeraldRed)
         .frame(width: 6, height: 6)
       Text(vm.isWatchReachable ? "Connected" : "Disconnected")
         .font(.caption2)
-        .foregroundColor(.secondary)
+        .foregroundColor(AppTheme.textSecondary)
       Spacer()
       Text(formattedTime)
         .font(.caption2)
-        .foregroundColor(.secondary)
+        .foregroundColor(AppTheme.textSecondary)
         .monospacedDigit()
     }
     .padding(.horizontal, 8)
     .padding(.vertical, 4)
     .frame(width: watchSize.width)
-    .background(Color.black.opacity(0.05))
+    .background(AppTheme.darkChocolateBg.opacity(0.05))
     .cornerRadius(8)
   }
 
@@ -53,7 +56,7 @@ struct WatchPreviewView: View {
       watchSOSView.tag(2)
     }
     .tabViewStyle(.page)
-    .background(Color.black)
+    .background(AppTheme.darkChocolateBg)
   }
 
   private var watchStatusView: some View {
@@ -61,37 +64,37 @@ struct WatchPreviewView: View {
       VStack(spacing: 8) {
         Image(systemName: vm.isMonitoringActive ? "heart.circle.fill" : "heart.slash")
           .font(.title2)
-          .foregroundColor(vm.isMonitoringActive ? .green : .gray)
+          .foregroundColor(vm.isMonitoringActive ? AppTheme.emeraldGreen : .gray)
 
         Text(vm.statusText)
           .font(.caption.bold())
-          .foregroundColor(.white)
+          .foregroundColor(AppTheme.diamondSparkle)
 
-        Divider().background(.gray)
+        Divider().background(AppTheme.diamondSilver.opacity(0.3))
 
         Label {
           Text("\(vm.heartRate) bpm")
             .font(.caption.bold())
-            .foregroundColor(.white)
+            .foregroundColor(AppTheme.diamondSparkle)
         } icon: {
-          Image(systemName: "heart.fill").foregroundColor(.red).font(.caption)
+          Image(systemName: "heart.fill").foregroundColor(AppTheme.emeraldRed).font(.caption)
         }
 
         Label {
           Text("\(vm.bloodOxygen) SpO2")
             .font(.caption.bold())
-            .foregroundColor(.white)
+            .foregroundColor(AppTheme.diamondSparkle)
         } icon: {
-          Image(systemName: "drop.fill").foregroundColor(.blue).font(.caption)
+          Image(systemName: "drop.fill").foregroundColor(AppTheme.emeraldGreen).font(.caption)
         }
 
         Text("Updated \(vm.lastSync.formatted(date: .omitted, time: .shortened))")
           .font(.system(size: 8))
-          .foregroundColor(.gray)
+          .foregroundColor(AppTheme.diamondSilver)
       }
       .padding(8)
     }
-    .background(Color.black)
+    .background(AppTheme.darkChocolateBg)
   }
 
   private var watchAlertsView: some View {
@@ -99,22 +102,22 @@ struct WatchPreviewView: View {
       if vm.alerts.isEmpty {
         Text("No active alerts")
           .font(.caption2)
-          .foregroundColor(.gray)
+          .foregroundColor(AppTheme.diamondSilver)
       }
       ForEach(vm.alerts) { alert in
         HStack(spacing: 4) {
           Circle()
-            .fill(alert.priority > 2 ? Color.red : Color.orange)
+            .fill(alert.priority > 2 ? AppTheme.emeraldRed : AppTheme.warning)
             .frame(width: 6, height: 6)
           Text(alert.summary)
             .font(.system(size: 9))
-            .foregroundColor(.white)
+            .foregroundColor(AppTheme.diamondSparkle)
         }
       }
     }
     .listStyle(.plain)
     .scrollContentBackground(.hidden)
-    .background(Color.black)
+    .background(AppTheme.darkChocolateBg)
   }
 
   private var watchSOSView: some View {
@@ -129,29 +132,31 @@ struct WatchPreviewView: View {
       }) {
         ZStack {
           Circle()
-            .fill(Color.red)
+            .fill(AppTheme.emeraldRed)
             .frame(width: 70, height: 70)
-            .shadow(radius: 4)
+            .shadow(color: AppTheme.emeraldRed.opacity(0.4), radius: 8)
           Text("SOS")
             .font(.caption.bold())
             .foregroundColor(.white)
         }
       }
       .buttonStyle(.plain)
+      .accessibilityLabel("Send SOS alert")
+      .accessibilityHint("Sends an emergency alert from the watch")
 
       if showSOSConfirmation {
         Text("Alert sent!")
           .font(.system(size: 9))
-          .foregroundColor(.green)
+          .foregroundColor(AppTheme.emeraldGreen)
           .transition(.opacity)
       } else {
         Text("Emergency alert")
           .font(.system(size: 8))
-          .foregroundColor(.gray)
+          .foregroundColor(AppTheme.diamondSilver)
       }
       Spacer()
     }
-    .background(Color.black)
+    .background(AppTheme.darkChocolateBg)
   }
 
   private var watchControls: some View {
@@ -162,7 +167,7 @@ struct WatchPreviewView: View {
           .labelStyle(.iconOnly)
       }
       .buttonStyle(.bordered)
-      .tint(selectedTab == 0 ? .accentColor : .gray)
+      .tint(selectedTab == 0 ? AppTheme.emeraldGreen : .gray)
 
       Button(action: { selectedTab = 1 }) {
         Label("Alerts", systemImage: "bell.fill")
@@ -170,7 +175,7 @@ struct WatchPreviewView: View {
           .labelStyle(.iconOnly)
       }
       .buttonStyle(.bordered)
-      .tint(selectedTab == 1 ? .accentColor : .gray)
+      .tint(selectedTab == 1 ? AppTheme.emeraldGreen : .gray)
 
       Button(action: { selectedTab = 2 }) {
         Label("SOS", systemImage: "exclamationmark.triangle.fill")
@@ -178,7 +183,7 @@ struct WatchPreviewView: View {
           .labelStyle(.iconOnly)
       }
       .buttonStyle(.bordered)
-      .tint(selectedTab == 2 ? .accentColor : .gray)
+      .tint(selectedTab == 2 ? AppTheme.emeraldGreen : .gray)
 
       Spacer()
 
@@ -187,7 +192,7 @@ struct WatchPreviewView: View {
           .font(.caption2)
       }
       .buttonStyle(.bordered)
-      .tint(.blue)
+      .tint(AppTheme.emeraldGreen)
       .accessibilityLabel("Simulate vital update")
 
       Button(action: vm.simulateAlert) {
@@ -195,7 +200,7 @@ struct WatchPreviewView: View {
           .font(.caption2)
       }
       .buttonStyle(.bordered)
-      .tint(.orange)
+      .tint(AppTheme.warning)
       .accessibilityLabel("Simulate test alert")
     }
     .padding(.top, 8)
@@ -219,19 +224,22 @@ final class WatchPreviewViewModel: ObservableObject {
   @Published var alerts: [PreviewAlert] = []
 
   struct PreviewAlert: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let summary: String
     let priority: Int
+    init(id: UUID = UUID(), summary: String, priority: Int) {
+      self.id = id
+      self.summary = summary
+      self.priority = priority
+    }
   }
 
   init() {
     isWatchReachable = WatchConnectivityService.shared.isReachable
-    NotificationCenter.default.addObserver(
-      forName: .init("WCSessionReachabilityChanged"),
-      object: nil,
-      queue: .main
-    ) { [weak self] _ in
-      self?.isWatchReachable = WatchConnectivityService.shared.isReachable
+    Task { @MainActor [weak self] in
+      for await _ in NotificationCenter.default.notifications(named: .init("WCSessionReachabilityChanged")) {
+        self?.isWatchReachable = WatchConnectivityService.shared.isReachable
+      }
     }
   }
 

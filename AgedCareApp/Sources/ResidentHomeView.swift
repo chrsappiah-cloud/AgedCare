@@ -44,15 +44,17 @@ struct ResidentHomeView: View {
   }
 
   var body: some View {
-    VStack(spacing: 28) {
-      connectionBanner
-      monitoringStatusCard
-      sosButton
-      callStaffCard
-      reassuranceSection
-      Spacer()
+    ScrollView {
+      VStack(spacing: 28) {
+        connectionBanner
+        monitoringStatusCard
+        sosButton
+        callStaffCard
+        reassuranceSection
+      }
+      .padding()
     }
-    .padding()
+    .background(AppTheme.gradientDiamond.ignoresSafeArea())
     .onAppear {
       coordinator.startMonitoring()
       handoff.startListening { action in handleHandoff(action) }
@@ -66,56 +68,63 @@ struct ResidentHomeView: View {
     HStack(spacing: 8) {
       Image(systemName: "applewatch.watchface")
         .font(.title3)
+        .foregroundColor(AppTheme.darkChocolate)
       Text("Connected to AgedCare")
         .font(.subheadline)
+        .foregroundColor(AppTheme.textPrimary)
       Spacer()
       if WatchConnectivityService.shared.isReachable {
         Image(systemName: "applewatch.radiowaves.left.and.right")
-          .foregroundColor(.green)
+          .foregroundColor(AppTheme.emeraldGreen)
           .accessibilityLabel("Watch connected")
       }
     }
     .padding(12)
-    .background(.ultraThinMaterial)
+    .background(AppTheme.surface)
     .cornerRadius(12)
+    .shadow(color: AppTheme.darkChocolate.opacity(0.06), radius: 4, x: 0, y: 2)
   }
 
   private var monitoringStatusCard: some View {
     VStack(spacing: 12) {
       HStack {
         Circle()
-          .fill(coordinator.monitoringEnabled ? Color.green : Color.red)
+          .fill(coordinator.monitoringEnabled ? AppTheme.emeraldGreen : AppTheme.emeraldRed)
           .frame(width: 16, height: 16)
         Text(coordinator.monitoringEnabled ? "Monitoring active" : "Monitoring paused")
-          .font(.title3)
+          .font(.title3.bold())
+          .foregroundColor(AppTheme.textPrimary)
         Spacer()
       }
       if let event = coordinator.lastEvent {
         Text("We noticed a strong movement at \(event.timestamp.formatted(date: .omitted, time: .shortened)). A staff member will check on you if needed.")
           .font(.body)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
       } else {
         Text("If you feel unwell or have a fall, press the button below.")
           .font(.body)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
       }
     }
     .padding()
-    .background(.thinMaterial)
-    .cornerRadius(18)
+    .cardStyle()
   }
 
   private var sosButton: some View {
     Button(action: triggerSOS) {
       ZStack {
         Circle()
-          .fill(Color.red)
+          .fill(AppTheme.gradientEmeraldRed)
           .frame(width: 160, height: 160)
-          .shadow(radius: 10)
-        Text("I need\nhelp")
-          .font(.system(size: 32, weight: .bold))
-          .multilineTextAlignment(.center)
-          .foregroundColor(.white)
+          .shadow(color: AppTheme.emeraldRed.opacity(0.4), radius: 14, x: 0, y: 6)
+        VStack(spacing: 2) {
+          Image(systemName: "exclamationmark.circle.fill")
+            .font(.title)
+          Text("I need\nhelp")
+            .font(.system(size: 28, weight: .bold))
+            .multilineTextAlignment(.center)
+        }
+        .foregroundColor(.white)
       }
     }
     .padding(.top, 4)
@@ -132,21 +141,22 @@ struct ResidentHomeView: View {
       HStack(spacing: 12) {
         Image(systemName: "bell.and.waves.left.and.right.fill")
           .font(.title2)
+          .foregroundColor(AppTheme.emeraldGreen)
         VStack(alignment: .leading, spacing: 2) {
           Text("Call a staff member")
             .font(.headline)
+            .foregroundColor(AppTheme.textPrimary)
           Text("Notifies available staff to check on you")
             .font(.caption)
-            .foregroundColor(.secondary)
+            .foregroundColor(AppTheme.textSecondary)
         }
         Spacer()
         Image(systemName: "chevron.right")
           .font(.caption)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
       }
       .padding()
-      .background(.thinMaterial)
-      .cornerRadius(14)
+      .cardStyle()
     }
     .buttonStyle(.plain)
     .accessibilityHint("Sends a notification to request staff assistance")
@@ -156,11 +166,15 @@ struct ResidentHomeView: View {
     VStack(spacing: 8) {
       Text("A nurse will be alerted if we detect a possible fall.")
         .font(.footnote)
-        .foregroundColor(.secondary)
+        .foregroundColor(AppTheme.textSecondary)
       if coordinator.lastErrorMessage != nil {
-        Text("Note: there was a problem sending information to the nurses. They may not see updates right away.")
-          .font(.footnote)
-          .foregroundColor(.orange)
+        HStack(spacing: 6) {
+          Image(systemName: "exclamationmark.triangle.fill")
+            .font(.caption)
+          Text("There was a problem sending information to the nurses. They may not see updates right away.")
+            .font(.footnote)
+        }
+        .foregroundColor(AppTheme.warning)
       }
     }
     .padding(.top, 8)
@@ -168,21 +182,28 @@ struct ResidentHomeView: View {
 
   private var staffConnectedSheet: some View {
     VStack(spacing: 24) {
+      Spacer()
       Image(systemName: "person.fill.checkmark")
         .font(.system(size: 60))
-        .foregroundColor(.green)
+        .foregroundColor(AppTheme.emeraldGreen)
       Text("Staff Member Connected")
         .font(.title.bold())
+        .foregroundColor(AppTheme.textPrimary)
       Text("A staff member has taken over monitoring. Your device is now linked to their dashboard.")
         .multilineTextAlignment(.center)
-        .foregroundColor(.secondary)
-      Button("OK") {
+        .foregroundColor(AppTheme.textSecondary)
+      Spacer()
+      Button(action: {
         showStaffConnected = false
         handoff.clearHandoff()
+      }) {
+        Text("OK")
+          .primaryButtonStyle()
+          .frame(maxWidth: 200)
       }
-      .buttonStyle(.borderedProminent)
     }
     .padding(32)
+    .background(AppTheme.background)
   }
 
   private func triggerSOS() {

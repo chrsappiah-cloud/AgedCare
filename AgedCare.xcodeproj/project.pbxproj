@@ -54,6 +54,7 @@
 		F201C748B12C6C2D5EAEC18F /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8233271DDBD1FBAF2B4E98DA /* WatchConnectivityService.swift */; };
 		F9E90D07DA9BE34DA85AEB0A /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6254AF2799FE5A97A1F5B5 /* InsightsView.swift */; };
 		FD39F8A2E527DFF9D6DBEC5D /* ResidentOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFF94469E5340F1A3440B66 /* ResidentOverviewView.swift */; };
+		FF793FD81B200067DC98C3E9 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B278A77386C8B322E618D4 /* AppTheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 		155864971D312C26F02B1DF4 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		15D68F082090BFF5A41F4C3D /* WatchPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPreviewView.swift; sourceTree = "<group>"; };
 		164FC7C76DA1467EF7AFB411 /* HealthKitIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitIntegrationTests.swift; sourceTree = "<group>"; };
+		18B278A77386C8B322E618D4 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		1C47C5EFF0CFBDA29C62B361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		233372C4DA6169838274BD54 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		35B8DEC219C5DE5A264B5427 /* AppHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHost.swift; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				E29E73FEE58BD6111FF24862 /* AlertsHomeView.swift */,
 				8F1A4530DC4597C340DA63C0 /* AlertViewModel.swift */,
 				35B8DEC219C5DE5A264B5427 /* AppHost.swift */,
+				18B278A77386C8B322E618D4 /* AppTheme.swift */,
 				4FEE5A95AECCE9B62D2EA8B7 /* AudioMonitorView.swift */,
 				AFF417926DC4B5932803925A /* AudioRecorderView.swift */,
 				477D2831B83E1212274C2680 /* DependencyContainer.swift */,
@@ -401,7 +404,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					C8DFEA84142F0D4D141F4077 = {
 						DevelopmentTeam = TM2WG7HH96;
@@ -506,6 +509,7 @@
 				B2A8DADDFD66B7BABB4C7D31 /* AlertViewModel.swift in Sources */,
 				60A9A9585E93724F9634F6E5 /* AlertsHomeView.swift in Sources */,
 				5ED4872035B00242290FBC44 /* AppHost.swift in Sources */,
+				FF793FD81B200067DC98C3E9 /* AppTheme.swift in Sources */,
 				7530A931ABE34AEE9FA7E737 /* AudioMonitorView.swift in Sources */,
 				591BEF8B9FC095ED8FF6915A /* AudioRecorderView.swift in Sources */,
 				B88C76AC0B9F684C2716C9D1 /* DependencyContainer.swift in Sources */,
@@ -606,6 +610,7 @@
 		2E57E80404671A3F21E9D685 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = AgedCareApp/AgedCareApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -626,6 +631,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APS_ENVIRONMENT = development;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -680,7 +686,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.9;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
@@ -747,6 +753,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APS_ENVIRONMENT = production;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -794,7 +801,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.9;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
@@ -819,6 +826,7 @@
 		EC3C562BBF164DC992A431FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = AgedCareApp/AgedCareApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

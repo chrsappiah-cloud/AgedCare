@@ -13,8 +13,17 @@ struct RootView: View {
           .environmentObject(session)
           .environmentObject(accessibilityManager)
       case .loading:
-        ProgressView("Signing in\u{2026}")
-          .accessibilityLabel("Signing in")
+        ZStack {
+          AppTheme.background.ignoresSafeArea()
+          VStack(spacing: 16) {
+            ProgressView()
+              .tint(AppTheme.emeraldGreen)
+              .scaleEffect(1.3)
+            Text("Signing in\u{2026}")
+              .foregroundColor(AppTheme.textSecondary)
+              .accessibilityLabel("Signing in")
+          }
+        }
       case .resident(let facilityId, let residentId):
         ResidentShellView(facilityId: facilityId, residentId: residentId)
           .environmentObject(container)
@@ -39,23 +48,33 @@ struct RoleSelectionView: View {
     NavigationStack {
       VStack(spacing: 40) {
         Spacer()
-        Text("AgedCare")
-          .font(.largeTitle.bold())
-          .accessibilityAddTraits(.isHeader)
-          .accessibilityLabel("Aged Care")
+
+        VStack(spacing: 4) {
+          Image(systemName: "heart.circle.fill")
+            .font(.system(size: 50))
+            .foregroundColor(AppTheme.emeraldRed)
+            .accessibilityHidden(true)
+
+          Text("AgedCare")
+            .font(.largeTitle.bold())
+            .foregroundColor(AppTheme.textPrimary)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityLabel("Aged Care")
+
+          Text("Compassionate care, connected")
+            .font(.subheadline)
+            .foregroundColor(AppTheme.darkChocolateLight)
+        }
 
         Text("Set up your device")
           .font(.title3)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
           .accessibilityLabel("Set up your device to get started")
 
         Button(action: { showResidentSetup = true }) {
           Label("Bedside device for a resident", systemImage: "bed.double")
-            .font(.headline)
-            .padding()
-            .frame(maxWidth: .infinity)
+            .primaryButtonStyle()
         }
-        .buttonStyle(.borderedProminent)
         .accessibilityHint("Sets up this device for a resident room")
         .accessibilityIdentifier("setup_resident")
         .sheet(isPresented: $showResidentSetup) {
@@ -68,8 +87,11 @@ struct RoleSelectionView: View {
             .font(.headline)
             .padding()
             .frame(maxWidth: .infinity)
+            .background(AppTheme.surface)
+            .foregroundColor(AppTheme.textPrimary)
+            .cornerRadius(14)
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(AppTheme.emeraldGreen, lineWidth: 2))
         }
-        .buttonStyle(.bordered)
         .accessibilityHint("Opens the staff sign in screen")
         .accessibilityIdentifier("staff_login")
         .sheet(isPresented: $showLogin) {
@@ -81,11 +103,12 @@ struct RoleSelectionView: View {
 
         Text("Test accounts: admin@gvcare.com / nurse@gvcare.com / carer@gvcare.com\nPassword: password")
           .font(.caption)
-          .foregroundColor(.secondary)
+          .foregroundColor(AppTheme.textSecondary)
           .multilineTextAlignment(.center)
           .accessibilityLabel("Test accounts available. Admin, nurse, and carer logins with password password")
       }
       .padding(32)
+      .background(AppTheme.gradientDiamond.ignoresSafeArea())
       .accessibilityElement(children: .contain)
     }
   }
