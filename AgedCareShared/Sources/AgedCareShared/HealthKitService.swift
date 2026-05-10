@@ -8,12 +8,14 @@ public enum HealthKitError: LocalizedError {
   case notAvailable
   case notAuthorized
   case queryFailed(String)
+  case observerSetupFailed(String)
 
   public var errorDescription: String? {
     switch self {
     case .notAvailable: return "HealthKit not available on this device"
     case .notAuthorized: return "HealthKit access not authorized"
     case .queryFailed(let msg): return "Health query failed: \(msg)"
+    case .observerSetupFailed(let msg): return "Observer setup failed: \(msg)"
     }
   }
 }
@@ -60,7 +62,8 @@ public enum VitalAlert: Sendable {
 public final class HealthKitService: @unchecked Sendable {
   public static let shared = HealthKitService()
   private let store = HKHealthStore()
-  private var isAuthorized = false
+  private var authorizations: Set<HKQuantityTypeIdentifier> = []
+  private var observerQueries: [HKQuery] = []
 
   private init() {}
 
@@ -77,6 +80,8 @@ public final class HealthKitService: @unchecked Sendable {
       HKObjectType.quantityType(forIdentifier: .stepCount)!,
       HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
       HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
+      HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic)!,
+      HKObjectType.quantityType(forIdentifier: .bloodPressureDiastolic)!,
     ]
 
     let typesToWrite: Set<HKSampleType> = [
@@ -84,7 +89,32 @@ public final class HealthKitService: @unchecked Sendable {
     ]
 
     try await store.requestAuthorization(toShare: typesToWrite, read: typesToRead)
-    isAuthorized = true
+    authorizations = [.heartRate, .oxygenSaturation, .stepCount]
+    try setupBackgroundObservers()
+  }
+
+  private func setupBackgroundObservers() throws {
+    let ids: [HKQuantityTypeIdentifier] = [.heartRate, .oxygenSaturation]
+    for id in ids {
+      let type = HKQuantityType.quantityType(forIdentifier: id)!
+      let query = HKObserverQuery(sampleType: type, predicate: nil) { _, completion, error in
+        if let error = error {
+          print("[HealthKit] Observer query error for \(id.rawValue): \(error.localizedDescription)")
+        }
+        completion()
+      }
+      store.execute(query)
+      observerQueries.append(query)
+      store.enableBackgroundDelivery(for: type, frequency: .immediate) { success, error in
+        if !success {
+          print("[HealthKit] Background delivery enable failed for \(id.rawValue): \(error?.localizedDescription ?? "unknown")")
+        }
+      }
+    }
+  }
+
+  private func isAuthorized(for type: HKQuantityTypeIdentifier) -> Bool {
+    authorizations.contains(type)
   }
 
   public func latestHeartRate() async throws -> VitalReading {
@@ -100,19 +130,21 @@ public final class HealthKitService: @unchecked Sendable {
   }
 
   private func latestQuantity(type: HKQuantityTypeIdentifier, unit: HKUnit) async throws -> VitalReading {
-    guard isAuthorized else { throw HealthKitError.notAuthorized }
-    let quantityType = HKQuantityType.quantityType(forIdentifier: type)!
+    guard isAvailable else { throw HealthKitError.notAvailable }
+    guard isAuthorized(for: type) else { throw HealthKitError.notAuthorized }
 
+    let quantityType = HKQuantityType.quantityType(forIdentifier: type)!
     let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+    let predicate = HKQuery.predicateForSamples(withStart: Date.distantPast, end: nil, options: [])
 
     return try await withCheckedThrowingContinuation { cont in
-      let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: 1, sortDescriptors: [sort]) { _, samples, error in
+      let query = HKSampleQuery(sampleType: quantityType, predicate: predicate, limit: 1, sortDescriptors: [sort]) { _, samples, error in
         if let error = error {
           cont.resume(throwing: HealthKitError.queryFailed(error.localizedDescription))
           return
         }
         guard let sample = samples?.first as? HKQuantitySample else {
-          cont.resume(throwing: HealthKitError.queryFailed("No data found"))
+          cont.resume(throwing: HealthKitError.queryFailed("No data found for \(type.rawValue)"))
           return
         }
         let reading = VitalReading(
@@ -127,16 +159,20 @@ public final class HealthKitService: @unchecked Sendable {
 
   public func startHeartRateMonitoring(interval: TimeInterval = 60) -> AsyncThrowingStream<VitalReading, Error> {
     AsyncThrowingStream { [weak self] continuation in
-      guard let self = self, self.isAuthorized else {
-        continuation.finish(throwing: HealthKitError.notAuthorized)
+      guard let self = self, self.isAvailable else {
+        continuation.finish(throwing: HealthKitError.notAvailable)
         return
       }
 
       let task = Task {
         while !Task.isCancelled {
+          if Task.isCancelled { break }
           do {
             let reading = try await self.latestHeartRate()
             continuation.yield(reading)
+          } catch HealthKitError.queryFailed where Task.isCancelled == false {
+            try await Task.sleep(nanoseconds: UInt64(10 * 1_000_000_000))
+            continue
           } catch {
             continuation.finish(throwing: error)
             return

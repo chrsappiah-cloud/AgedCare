@@ -9,7 +9,7 @@ final class DependencyContainer: ObservableObject {
   init() {
     let config = SupabaseConfig(
       baseURL: AppHost.baseURL,
-      apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder"
+      apiKey: AppHost.supabaseAnonKey
     )
     supabase = SupabaseClient(
       config: config,

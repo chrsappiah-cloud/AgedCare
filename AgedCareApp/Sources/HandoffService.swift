@@ -1,5 +1,5 @@
 import Foundation
-import UserNotifications
+@preconcurrency import UserNotifications
 import UIKit
 import AgedCareShared
 
@@ -57,7 +57,7 @@ final class HandoffService: NSObject, ObservableObject {
     pendingHandoff = action
     postLocalNotification(for: action)
     handoffCallback?(action)
-    try? await callRPC("create_handoff_request", body: [
+    let _ = try? await callRPC("create_handoff_request", body: [
       "p_facility_id": facilityId,
       "p_resident_id": residentId,
       "p_notes": "\(residentName) requested staff assistance",
@@ -68,7 +68,7 @@ final class HandoffService: NSObject, ObservableObject {
     let action = HandoffAction.staffTakeover(staffId: staffId, staffName: staffName, facilityId: facilityId)
     pendingHandoff = nil
     postLocalNotification(for: action)
-    try? await callRPC("resolve_handoff_request", body: ["p_alert_id": activeTransferToken ?? ""])
+    let _ = try? await callRPC("resolve_handoff_request", body: ["p_alert_id": activeTransferToken ?? ""])
     clearHandoff()
     handoffCallback?(action)
   }
@@ -89,6 +89,7 @@ final class HandoffService: NSObject, ObservableObject {
     activeTransferToken = nil
   }
 
+  @discardableResult
   private func callRPC(_ name: String, body: [String: Any]) async throws -> Data? {
     let url = baseURL.appendingPathComponent("/rest/v1/rpc/\(name)")
     var req = URLRequest(url: url)
@@ -147,7 +148,7 @@ final class HandoffService: NSObject, ObservableObject {
   }
 }
 
-extension HandoffService: UNUserNotificationCenterDelegate {
+nonisolated extension HandoffService: UNUserNotificationCenterDelegate {
   func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
     let userInfo = response.notification.request.content.userInfo
     guard userInfo["handoff"] as? Bool == true else {

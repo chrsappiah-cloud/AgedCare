@@ -157,7 +157,7 @@ struct ResidentHomeView: View {
       Text("A nurse will be alerted if we detect a possible fall.")
         .font(.footnote)
         .foregroundColor(.secondary)
-      if let error = coordinator.lastErrorMessage {
+      if coordinator.lastErrorMessage != nil {
         Text("Note: there was a problem sending information to the nurses. They may not see updates right away.")
           .font(.footnote)
           .foregroundColor(.orange)
@@ -190,7 +190,7 @@ struct ResidentHomeView: View {
     WatchConnectivityService.shared.sendSOSAlert(facilityId: facilityId.uuidString, residentId: residentId.uuidString)
     Task {
       do {
-        try await container.alertsRepository.createSOSAlert(facilityId: facilityId, residentId: residentId)
+        let _ = try await container.alertsRepository.createSOSAlert(facilityId: facilityId, residentId: residentId)
         coordinator.lastErrorMessage = nil
         let content = UNMutableNotificationContent()
         content.title = "SOS Sent"

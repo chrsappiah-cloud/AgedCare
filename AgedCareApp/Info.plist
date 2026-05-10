@@ -31,6 +31,7 @@
   <array>
     <string>remote-notification</string>
     <string>processing</string>
+    <string>health-delivery</string>
   </array>
   <key>NSHealthShareUsageDescription</key>
   <string>AgedCare reads heart rate and oxygen saturation to detect abnormal vitals and trigger alerts for residents.</string>

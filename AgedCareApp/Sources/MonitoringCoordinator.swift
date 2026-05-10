@@ -143,7 +143,7 @@ final class MonitoringCoordinator: ObservableObject {
 
   private func triggerExternalAlert(type: String, priority: Int) async {
     do {
-      try await alertsRepository.createFallAlert(facilityId: facilityId, residentId: residentId, priority: priority)
+      let _ = try await alertsRepository.createFallAlert(facilityId: facilityId, residentId: residentId, priority: priority)
     } catch {
       lastErrorMessage = "Alert creation failed: \(error.localizedDescription)"
     }
