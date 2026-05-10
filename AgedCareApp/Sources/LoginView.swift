@@ -47,6 +47,17 @@ struct LoginView: View {
       .buttonStyle(.borderedProminent)
       .disabled(email.isEmpty || password.isEmpty)
 
+      Text("Demo Access")
+        .font(.subheadline.bold())
+        .foregroundColor(.secondary)
+        .padding(.top, 8)
+
+      VStack(spacing: 10) {
+        DemoButton(title: "Admin — Dr. Sarah Chen", email: "admin@gvcare.com", password: "password", session: session)
+        DemoButton(title: "Nurse — John Smith", email: "nurse@gvcare.com", password: "password", session: session)
+        DemoButton(title: "Carer — Emma Davis", email: "carer@gvcare.com", password: "password", session: session)
+      }
+
       Button(action: { session.state = .onboarding }) {
         Text("Back")
           .font(.subheadline)
@@ -55,5 +66,37 @@ struct LoginView: View {
       Spacer()
     }
     .padding(32)
+  }
+}
+
+private struct DemoButton: View {
+  let title: String
+  let email: String
+  let password: String
+  let session: SessionViewModel
+
+  var body: some View {
+    Button(action: {
+      Task { await session.login(email: email, password: password) }
+    }) {
+      HStack {
+        Image(systemName: "person.circle.fill")
+          .font(.caption)
+        Text(title)
+          .font(.caption)
+        Spacer()
+        Text("Tap")
+          .font(.caption2.bold())
+          .padding(.horizontal, 10)
+          .padding(.vertical, 4)
+          .background(Color.accentColor.opacity(0.2))
+          .cornerRadius(6)
+      }
+      .padding(.horizontal, 12)
+      .padding(.vertical, 8)
+      .background(Color(.systemGray6))
+      .cornerRadius(8)
+    }
+    .buttonStyle(.plain)
   }
 }

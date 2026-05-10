@@ -36,5 +36,13 @@
   <string>AgedCare reads heart rate and oxygen saturation to detect abnormal vitals and trigger alerts for residents.</string>
   <key>NSHealthUpdateUsageDescription</key>
   <string>AgedCare records heart rate data to monitor resident health trends.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>AgedCare uses the camera to attach photos to alerts and set profile pictures.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>AgedCare uses the microphone to record voice notes attached to alerts.</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>AgedCare accesses your photo library to attach images to alerts and set profile pictures.</string>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>AgedCare saves photos to your library from incident documentation.</string>
 </dict>
 </plist>

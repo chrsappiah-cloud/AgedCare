@@ -9,11 +9,15 @@
 /* Begin PBXBuildFile section */
 		070AD30F9B014D0D25986568 /* ResidentHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB693392F281D26C9D0D99DE /* ResidentHomeView.swift */; };
 		08FEA75FA4F6AB3F172ABD98 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0A8DA48915515D1154BF7 /* Models.swift */; };
+		0DC771C411C2E3C093BFBB38 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30CF22D6EE40CDE9ABDAA53 /* ImagePicker.swift */; };
 		257C54BDE82D34FBEC9FBA8D /* AgedCareSharedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC565CC77B232C9CBFF258AF /* AgedCareSharedTests.swift */; };
 		26EFC90AC83F4617BEA09BD8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233372C4DA6169838274BD54 /* NotificationService.swift */; };
 		4274D1422BAA55C5CE59A51A /* ResidentSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F0BD40E61029044DC639CC /* ResidentSetupView.swift */; };
 		45DD9DE6B898642C3B5C10FA /* AgedCareShared in Frameworks */ = {isa = PBXBuildFile; productRef = A86978547DBC875F51F7B784 /* AgedCareShared */; };
 		540BD623D11D4374944B0D32 /* SessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9127BE17E04F504389592A14 /* SessionViewModel.swift */; };
+		565227CBA091EC7252D0BA69 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88F428D071D0C784AA5D5BE /* SoundManager.swift */; };
+		588A034F8C85A716CC8D11A7 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46674273A73B4AF6511E8EAC /* VideoPlayerView.swift */; };
+		591BEF8B9FC095ED8FF6915A /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF417926DC4B5932803925A /* AudioRecorderView.swift */; };
 		59AA161EE02488860AD632F7 /* StaffShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF855E4405295E0E01B362E3 /* StaffShellView.swift */; };
 		5ED4872035B00242290FBC44 /* AppHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8DEC219C5DE5A264B5427 /* AppHost.swift */; };
 		60A9A9585E93724F9634F6E5 /* AlertsHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E73FEE58BD6111FF24862 /* AlertsHomeView.swift */; };
@@ -24,12 +28,15 @@
 		859635F9A0C1B60F6E8F9BDF /* RepositoryIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1FD21FBBE6ED602784F5DF /* RepositoryIntegrationTests.swift */; };
 		8C492307DD9159476C98A974 /* ResidentsHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABBF8789B1E255AFC000FFA /* ResidentsHomeView.swift */; };
 		9BAD44BE5D29F4C742B76690 /* AgedCareShared in Frameworks */ = {isa = PBXBuildFile; productRef = 5332A5EFF3807AB53B0D5D73 /* AgedCareShared */; };
+		A38783136F9C3023F521AC28 /* MediaAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D28C3E69A87805A7D37050C /* MediaAttachmentView.swift */; };
 		A8B5E8841FD3CD65F3021E00 /* AlertViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2668509934514A5A2E0DFB8 /* AlertViewModelTests.swift */; };
 		AF11DB4B058BEA0E05B71F02 /* AlertDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D364440BDAC8FF0589DEBD91 /* AlertDetailView.swift */; };
+		B2758DC2F1BF1A16DB7723F1 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155864971D312C26F02B1DF4 /* ProfileImageView.swift */; };
 		B2A8DADDFD66B7BABB4C7D31 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1A4530DC4597C340DA63C0 /* AlertViewModel.swift */; };
 		B2B0DED09C58BAFB702AFA09 /* ResidentTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9295B03ED45EFA4E3C82AC6B /* ResidentTimelineView.swift */; };
 		B86792F01CA0495A07C3A480 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCD782F4C911DC1614397EF3 /* Assets.xcassets */; };
 		B88C76AC0B9F684C2716C9D1 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477D2831B83E1212274C2680 /* DependencyContainer.swift */; };
+		D9AB1495D06BC5B70F94A73A /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02410FB3F45B4D64AA202E63 /* ImageCache.swift */; };
 		D9D602FFDF091CF7DAA64D1B /* MonitoringCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E15581BAEB9482E87D402BF /* MonitoringCoordinator.swift */; };
 		E01A2FB58441838B02BC3399 /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AF3F5D018E8A049A483A83 /* PushNotificationService.swift */; };
 		F090CF1931386861C258B0C2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7F081AF57DC88B26890C4 /* SettingsView.swift */; };
@@ -56,13 +63,17 @@
 
 /* Begin PBXFileReference section */
 		0099097EC929ED72F622F6FF /* AgedCareApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgedCareApp.swift; sourceTree = "<group>"; };
+		02410FB3F45B4D64AA202E63 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		0D1FD21FBBE6ED602784F5DF /* RepositoryIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryIntegrationTests.swift; sourceTree = "<group>"; };
+		155864971D312C26F02B1DF4 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		1C47C5EFF0CFBDA29C62B361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		233372C4DA6169838274BD54 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		35B8DEC219C5DE5A264B5427 /* AppHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHost.swift; sourceTree = "<group>"; };
 		420B2D1C663B269CE96137C0 /* AgedCareApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AgedCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		46674273A73B4AF6511E8EAC /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		477D2831B83E1212274C2680 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		4DAB70D99FE22C3E08E32EA3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		5D28C3E69A87805A7D37050C /* MediaAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAttachmentView.swift; sourceTree = "<group>"; };
 		7CFF94469E5340F1A3440B66 /* ResidentOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResidentOverviewView.swift; sourceTree = "<group>"; };
 		8CE0A8DA48915515D1154BF7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		8E15581BAEB9482E87D402BF /* MonitoringCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringCoordinator.swift; sourceTree = "<group>"; };
@@ -72,8 +83,11 @@
 		9D7CE459623A0B893624FD91 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		A4FA258CC319A972F5C7E609 /* AgedCareShared */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AgedCareShared; path = AgedCareShared; sourceTree = SOURCE_ROOT; };
 		AF855E4405295E0E01B362E3 /* StaffShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffShellView.swift; sourceTree = "<group>"; };
+		AFF417926DC4B5932803925A /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
 		B290FC016377911D5774A7A6 /* AgedCareSharedTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AgedCareSharedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30CF22D6EE40CDE9ABDAA53 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B5D7F081AF57DC88B26890C4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B88F428D071D0C784AA5D5BE /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		BAA3CD648D069C0E7CBB7DDA /* AgedCareAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AgedCareAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC565CC77B232C9CBFF258AF /* AgedCareSharedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgedCareSharedTests.swift; sourceTree = "<group>"; };
 		BD6254AF2799FE5A97A1F5B5 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
@@ -141,11 +155,16 @@
 				E29E73FEE58BD6111FF24862 /* AlertsHomeView.swift */,
 				8F1A4530DC4597C340DA63C0 /* AlertViewModel.swift */,
 				35B8DEC219C5DE5A264B5427 /* AppHost.swift */,
+				AFF417926DC4B5932803925A /* AudioRecorderView.swift */,
 				477D2831B83E1212274C2680 /* DependencyContainer.swift */,
+				02410FB3F45B4D64AA202E63 /* ImageCache.swift */,
+				B30CF22D6EE40CDE9ABDAA53 /* ImagePicker.swift */,
 				BD6254AF2799FE5A97A1F5B5 /* InsightsView.swift */,
 				9D7CE459623A0B893624FD91 /* LoginView.swift */,
+				5D28C3E69A87805A7D37050C /* MediaAttachmentView.swift */,
 				8CE0A8DA48915515D1154BF7 /* Models.swift */,
 				8E15581BAEB9482E87D402BF /* MonitoringCoordinator.swift */,
+				155864971D312C26F02B1DF4 /* ProfileImageView.swift */,
 				D9AF3F5D018E8A049A483A83 /* PushNotificationService.swift */,
 				DB693392F281D26C9D0D99DE /* ResidentHomeView.swift */,
 				7CFF94469E5340F1A3440B66 /* ResidentOverviewView.swift */,
@@ -155,7 +174,9 @@
 				4DAB70D99FE22C3E08E32EA3 /* RootView.swift */,
 				9127BE17E04F504389592A14 /* SessionViewModel.swift */,
 				B5D7F081AF57DC88B26890C4 /* SettingsView.swift */,
+				B88F428D071D0C784AA5D5BE /* SoundManager.swift */,
 				AF855E4405295E0E01B362E3 /* StaffShellView.swift */,
+				46674273A73B4AF6511E8EAC /* VideoPlayerView.swift */,
 			);
 			name = Sources;
 			path = AgedCareApp/Sources;
@@ -380,11 +401,16 @@
 				B2A8DADDFD66B7BABB4C7D31 /* AlertViewModel.swift in Sources */,
 				60A9A9585E93724F9634F6E5 /* AlertsHomeView.swift in Sources */,
 				5ED4872035B00242290FBC44 /* AppHost.swift in Sources */,
+				591BEF8B9FC095ED8FF6915A /* AudioRecorderView.swift in Sources */,
 				B88C76AC0B9F684C2716C9D1 /* DependencyContainer.swift in Sources */,
+				D9AB1495D06BC5B70F94A73A /* ImageCache.swift in Sources */,
+				0DC771C411C2E3C093BFBB38 /* ImagePicker.swift in Sources */,
 				F9E90D07DA9BE34DA85AEB0A /* InsightsView.swift in Sources */,
 				726C07904EC970AF10F6BD27 /* LoginView.swift in Sources */,
+				A38783136F9C3023F521AC28 /* MediaAttachmentView.swift in Sources */,
 				08FEA75FA4F6AB3F172ABD98 /* Models.swift in Sources */,
 				D9D602FFDF091CF7DAA64D1B /* MonitoringCoordinator.swift in Sources */,
+				B2758DC2F1BF1A16DB7723F1 /* ProfileImageView.swift in Sources */,
 				E01A2FB58441838B02BC3399 /* PushNotificationService.swift in Sources */,
 				070AD30F9B014D0D25986568 /* ResidentHomeView.swift in Sources */,
 				FD39F8A2E527DFF9D6DBEC5D /* ResidentOverviewView.swift in Sources */,
@@ -394,7 +420,9 @@
 				75FD06BB369ACCE6D73AE029 /* RootView.swift in Sources */,
 				540BD623D11D4374944B0D32 /* SessionViewModel.swift in Sources */,
 				F090CF1931386861C258B0C2 /* SettingsView.swift in Sources */,
+				565227CBA091EC7252D0BA69 /* SoundManager.swift in Sources */,
 				59AA161EE02488860AD632F7 /* StaffShellView.swift in Sources */,
+				588A034F8C85A716CC8D11A7 /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

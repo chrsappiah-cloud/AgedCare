@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, uuid, hashlib, hmac, base64, time
+import json, uuid, hashlib, hmac, base64, time, os
 from bottle import route, run, request, response, HTTPResponse
 import pg8000.native
 
@@ -236,7 +236,89 @@ def get_facility():
         conn.close()
 
 
+MEDIA_DIR = os.path.join(os.path.dirname(__file__), "media")
+os.makedirs(MEDIA_DIR, exist_ok=True)
+
+
+@route("/upload", method="POST")
+def upload_media():
+    data = request.json or {}
+    file_b64 = data.get("data_base64", "")
+    filename = data.get("filename", f"file_{uuid.uuid4().hex[:12]}")
+    attachment_type = data.get("attachment_type", "photo")
+    alert_id = data.get("alert_id")
+
+    if not file_b64:
+        return HTTPResponse(status=400, body=json.dumps({"error": "missing data_base64"}))
+
+    try:
+        file_bytes = base64.b64decode(file_b64)
+    except Exception:
+        return HTTPResponse(status=400, body=json.dumps({"error": "invalid base64"}))
+
+    ext_map = {"photo": ".jpg", "audio": ".m4a", "video": ".mp4"}
+    ext = ext_map.get(attachment_type, ".bin")
+    stored_name = f"{uuid.uuid4().hex}{ext}"
+    stored_path = os.path.join(MEDIA_DIR, stored_name)
+
+    with open(stored_path, "wb") as f:
+        f.write(file_bytes)
+
+    url = f"/media/{stored_name}"
+    return json_response({"url": url, "filename": filename})
+
+
+@route("/media/<filename:path>", method="GET")
+def serve_media(filename):
+    filepath = os.path.join(MEDIA_DIR, filename)
+    if not os.path.exists(filepath):
+        return HTTPResponse(status=404, body=json.dumps({"error": "not found"}))
+    with open(filepath, "rb") as f:
+        data = f.read()
+    response.content_type = {
+        ".jpg": "image/jpeg",
+        ".png": "image/png",
+        ".m4a": "audio/mp4",
+        ".mp4": "video/mp4",
+        ".wav": "audio/wav",
+        ".bin": "application/octet-stream",
+    }.get(os.path.splitext(filename)[1], "application/octet-stream")
+    return data
+
+
+@route("/alert/<alert_id:int>/attachments", method="GET")
+def get_attachments(alert_id):
+    conn = get_db()
+    try:
+        rows = q(conn,
+            "SELECT id, attachment_type, file_url, filename, created_at "
+            "FROM public.alert_attachments WHERE alert_id = :aid ORDER BY created_at",
+            aid=alert_id)
+        return json_response([{
+            "id": str(r[0]), "type": r[1], "url": r[2],
+            "filename": r[3], "created_at": r[4].isoformat(),
+        } for r in rows])
+    finally:
+        conn.close()
+
+
+@route("/alert/<alert_id:int>/attachments", method="POST")
+def add_attachment(alert_id):
+    data = request.json or {}
+    conn = get_db()
+    try:
+        row = q(conn,
+            "INSERT INTO public.alert_attachments (alert_id, attachment_type, file_url, filename) "
+            "VALUES (:aid, :typ, :url, :name) RETURNING id",
+            aid=alert_id, typ=data["attachment_type"],
+            url=data["file_url"], name=data.get("filename", "unnamed"))
+        return json_response({"id": row[0][0]})
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     print(f"🚀 AgedCare backend starting on http://localhost:8081")
     print(f"   Database: {DB_NAME}")
+    print(f"   Media directory: {MEDIA_DIR}")
     run(host="0.0.0.0", port=8081, debug=True)

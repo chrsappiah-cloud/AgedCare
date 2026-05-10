@@ -5,15 +5,40 @@ struct SettingsView: View {
   let session: SessionViewModel
   @EnvironmentObject var container: DependencyContainer
 
+  @State private var showCamera = false
+  @State private var showPhotoLibrary = false
+  @State private var profileImage: UIImage?
+
   var body: some View {
     NavigationStack {
       List {
         Section("Account") {
+          HStack(spacing: 12) {
+            ZStack {
+              if let img = profileImage {
+                Image(uiImage: img)
+                  .resizable()
+                  .scaledToFill()
+                  .frame(width: 60, height: 60)
+                  .clipShape(Circle())
+              } else {
+                ProfileImageView(name: staff.displayName ?? staff.role, imageURL: nil, size: .medium)
+              }
+            }
+            .onTapGesture { showCamera = true }
+
+            VStack(alignment: .leading, spacing: 2) {
+              Text(staff.displayName ?? staff.role.capitalized)
+                .font(.headline)
+              Text(staff.role.capitalized)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
+          }
+
           if let email = staff.email {
             LabeledContent("Email", value: email)
           }
-          LabeledContent("Name", value: staff.displayName ?? "\u{2014}")
-          LabeledContent("Role", value: staff.role.capitalized)
           LabeledContent("Facility ID", value: staff.facilityId.uuidString.prefix(8).description)
         }
 
@@ -34,7 +59,21 @@ struct SettingsView: View {
         }
       }
       .navigationTitle("Settings")
+      .confirmationDialog("Change profile photo", isPresented: $showCamera) {
+        Button("Camera") { showCamera = true }
+        Button("Photo Library") { showPhotoLibrary = true }
+        Button("Cancel", role: .cancel) {}
+      }
+      .sheet(isPresented: $showPhotoLibrary) {
+        ImagePicker(sourceType: .photoLibrary, onPick: { image in
+          profileImage = image
+        }, onCancel: {})
+      }
+      .sheet(isPresented: $showCamera) {
+        ImagePicker(sourceType: .camera, onPick: { image in
+          profileImage = image
+        }, onCancel: {})
+      }
     }
   }
-
 }

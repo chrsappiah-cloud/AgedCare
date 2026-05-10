@@ -22,6 +22,7 @@ struct ResidentShellView: View {
     )
     .onAppear {
       UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+      SoundManager.shared.prepare()
     }
   }
 }
@@ -111,7 +112,7 @@ struct ResidentHomeView: View {
   }
 
   private func triggerSOS() {
-    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate)
+    SoundManager.shared.playSOS()
     Task {
       do {
         try await container.alertsRepository.createSOSAlert(facilityId: facilityId, residentId: residentId)
@@ -120,6 +121,7 @@ struct ResidentHomeView: View {
         let content = UNMutableNotificationContent()
         content.title = "SOS Sent"
         content.body = "Help has been requested. A staff member will respond shortly."
+        content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         try? await center.add(request)
       } catch {

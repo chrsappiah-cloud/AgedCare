@@ -29,7 +29,8 @@ struct ResidentOverviewView: View {
   }
 
   private var header: some View {
-    HStack {
+    HStack(spacing: 16) {
+      ProfileImageView(name: resident.name, imageURL: nil, size: .medium)
       VStack(alignment: .leading, spacing: 4) {
         Text(resident.name)
           .font(.title2.bold())

@@ -90,8 +90,27 @@ struct ResidentSetupView: View {
 struct ResidentRow: View {
   let resident: ResidentModel
 
+  @State private var showCamera = false
+  @State private var showPhotoLibrary = false
+  @State private var profileImage: UIImage?
+
   var body: some View {
-    HStack {
+    HStack(spacing: 12) {
+      ZStack {
+        if let img = profileImage {
+          Image(uiImage: img)
+            .resizable()
+            .scaledToFill()
+            .frame(width: 48, height: 48)
+            .clipShape(Circle())
+        } else {
+          ProfileImageView(name: resident.name, imageURL: nil, size: .custom(48))
+        }
+      }
+      .onTapGesture {
+        showCamera = true
+      }
+
       VStack(alignment: .leading, spacing: 4) {
         Text(resident.name)
           .font(.headline)
@@ -112,6 +131,21 @@ struct ResidentRow: View {
         .foregroundColor(.secondary)
     }
     .padding(.vertical, 4)
+    .confirmationDialog("Add photo", isPresented: $showCamera) {
+      Button("Camera") { showCamera = true }
+      Button("Photo Library") { showPhotoLibrary = true }
+      Button("Cancel", role: .cancel) {}
+    }
+    .sheet(isPresented: $showPhotoLibrary) {
+      ImagePicker(sourceType: .photoLibrary, onPick: { image in
+        profileImage = image
+      }, onCancel: {})
+    }
+    .sheet(isPresented: $showCamera) {
+      ImagePicker(sourceType: .camera, onPick: { image in
+        profileImage = image
+      }, onCancel: {})
+    }
   }
 
   private func riskColor(_ risk: String) -> Color {
