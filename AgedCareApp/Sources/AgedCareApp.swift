@@ -49,10 +49,15 @@ struct AgedCareApp: App {
 
     // 3. CloudKit alert sync subscription
     #if canImport(CloudKit)
-    do {
-      try await CloudKitAlertSync.shared.subscribeToChanges()
-    } catch {
-      print("ℹ️ CloudKit subscription deferred: \(error.localizedDescription)")
+    CloudKitAlertSync.shared = CloudKitAlertSync()
+    if let cloudKit = CloudKitAlertSync.shared {
+      do {
+        try await cloudKit.subscribeToChanges()
+      } catch {
+        print("ℹ️ CloudKit subscription deferred: \(error.localizedDescription)")
+      }
+    } else {
+      print("ℹ️ CloudKit not available (running on simulator or no iCloud account)")
     }
     #endif
   }

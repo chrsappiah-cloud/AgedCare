@@ -17,20 +17,28 @@ public enum CloudKitSyncError: LocalizedError {
 }
 
 public final class CloudKitAlertSync: @unchecked Sendable {
-  public static let shared = CloudKitAlertSync()
-  public let container: CKContainer
-  public let sharedDB: CKDatabase
+  public static var shared: CloudKitAlertSync? = nil
+  public var container: CKContainer!
+  public var sharedDB: CKDatabase!
 
   public static let alertRecordType = "AgedCareAlert"
   public static let subscriptionID = "agedcare-alert-changes"
 
-  private let service: CloudKitService
+  private var service: CloudKitService!
 
-  private init() {
-    let c = CKContainer.default()
-    self.container = c
-    self.sharedDB = c.sharedCloudDatabase
-    self.service = CloudKitService.shared
+  public init() {
+    // Eager init deferred — call setup() before use
+  }
+
+  public func setup() throws {
+    guard container == nil else { return }
+    #if targetEnvironment(simulator)
+    throw CloudKitSyncError.containerNotConfigured
+    #else
+    container = CKContainer.default()
+    sharedDB = container.sharedCloudDatabase
+    service = CloudKitService.shared
+    #endif
   }
 
   // MARK: - Record conversion
@@ -76,6 +84,7 @@ public final class CloudKitAlertSync: @unchecked Sendable {
   // MARK: - Sync operations
 
   public func pushAlert(_ alert: AlertModel, facilityId: UUID) async throws {
+    try setup()
     let record = makeAlertRecord(
       id: "alert-\(alert.id)",
       facilityId: facilityId.uuidString,
@@ -88,6 +97,7 @@ public final class CloudKitAlertSync: @unchecked Sendable {
   }
 
   public func updateAlertStatus(alertId: Int64, status: String) async throws {
+    try setup()
     let recordID = CKRecord.ID(recordName: "alert-\(alertId)")
     let record = try await sharedDB.record(for: recordID)
     record["status"] = status
@@ -95,6 +105,7 @@ public final class CloudKitAlertSync: @unchecked Sendable {
   }
 
   public func fetchAlerts(facilityId: UUID) async throws -> [AlertModel] {
+    try setup()
     let pred = NSPredicate(format: "facilityId == %@", facilityId.uuidString)
     let records = try await service.query(recordType: Self.alertRecordType, predicate: pred, in: sharedDB)
     return records.compactMap { alertFromRecord($0) }
@@ -103,6 +114,7 @@ public final class CloudKitAlertSync: @unchecked Sendable {
   // MARK: - Subscriptions (real-time push)
 
   public func subscribeToChanges() async throws {
+    try setup()
     let sub = CKQuerySubscription(
       recordType: Self.alertRecordType,
       predicate: NSPredicate(value: true),
@@ -127,12 +139,14 @@ public final class CloudKitAlertSync: @unchecked Sendable {
   }
 
   public func unsubscribe() async throws {
+    try setup()
     try await sharedDB.deleteSubscription(withID: Self.subscriptionID)
   }
 
   // MARK: - Remote notification handling
 
   public func handleRemoteNotification(_ userInfo: [AnyHashable: Any]) async {
+    do { try setup() } catch { return }
     let notification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String: NSObject])
     guard
       let queryNotification = notification as? CKQueryNotification,

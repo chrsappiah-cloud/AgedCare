@@ -40,6 +40,20 @@ targets:
       CODE_SIGNING_STYLE: Automatic
       CODE_SIGNING_ALLOWED: NO
 
+  AgedCareSharedTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - AgedCareShared/Tests/AgedCareSharedTests
+    dependencies:
+      - package: AgedCareShared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.agedcare.shared.tests
+      SWIFT_VERSION: "5.9"
+      GENERATE_INFOPLIST_FILE: YES
+      CODE_SIGNING_STYLE: Automatic
+      CODE_SIGNING_ALLOWED: NO
+
   NotificationServiceExtension:
     type: app-extension
     platform: iOS

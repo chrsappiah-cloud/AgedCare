@@ -91,7 +91,7 @@ final class MonitoringCoordinator: ObservableObject {
 
   private func subscribeToCloudKitAlerts() {
     #if canImport(CloudKit)
-    let sync = CloudKitAlertSync.shared
+    guard let sync = CloudKitAlertSync.shared else { return }
     sync.alertUpdateHandler = { [weak self] alert, reason in
       Task { @MainActor in
         self?.postLocalNotification(

@@ -64,8 +64,7 @@ public final class PushNotificationService: NSObject {
 
     #if canImport(CloudKit)
     if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-      let sync = CloudKitAlertSync.shared
-      await sync.handleRemoteNotification(userInfo)
+      await CloudKitAlertSync.shared?.handleRemoteNotification(userInfo)
     }
     #endif
   }
@@ -95,7 +94,7 @@ extension PushNotificationService {
   public func subscribeAndRegister() async throws {
     try await register()
     registerForRemoteNotifications()
-    try await CloudKitAlertSync.shared.subscribeToChanges()
+    try await CloudKitAlertSync.shared?.subscribeToChanges()
   }
 }
 #endif
