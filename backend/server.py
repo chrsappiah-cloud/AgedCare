@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json, uuid, hashlib, hmac, base64, time, os
+from datetime import datetime, timezone
 from bottle import route, run, request, response, HTTPResponse
 import pg8000.native
 
@@ -172,7 +173,7 @@ def rpc_handler(rpc_name):
         elif rpc_name == "record_vital_event":
             q(conn,
                 "INSERT INTO public.sensor_events (facility_id, resident_id, type, subtype, metric, timestamp, payload) "
-                "VALUES (:fid, :rid, 'vital', 'snapshot', :metric, :ts, jsonb_build_object('value', :val))",
+                "VALUES (:fid, :rid, 'vital', 'snapshot', :metric, to_timestamp(:ts, 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"'), jsonb_build_object('value', :val::numeric))",
                 fid=body["p_facility_id"], rid=body["p_resident_id"],
                 metric=body["p_metric"], ts=body["p_timestamp"], val=body["p_value"])
             response.status = 204
@@ -313,6 +314,169 @@ def add_attachment(alert_id):
             aid=alert_id, typ=data["attachment_type"],
             url=data["file_url"], name=data.get("filename", "unnamed"))
         return json_response({"id": row[0][0]})
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
+# AI Monitor Endpoints (inline, also available as standalone ai_monitor.py)
+# ---------------------------------------------------------------------------
+
+@route("/ai/analyze/media", method="POST")
+def ai_analyze_media():
+    data = request.json or {}
+    file_b64 = data.get("data_base64", "")
+    filename = data.get("filename", "unknown")
+    media_type = data.get("media_type", "photo")
+    facility_id = data.get("facility_id")
+    resident_id = data.get("resident_id")
+    if not file_b64 or not facility_id:
+        return HTTPResponse(status=400, body=json.dumps({"error": "missing data_base64 or facility_id"}))
+    try:
+        file_bytes = base64.b64decode(file_b64)
+    except Exception:
+        return HTTPResponse(status=400, body=json.dumps({"error": "invalid base64"}))
+    result = {"summary": "Analyzed by AI Monitor", "confidence": 0.85, "insights": [], "sentiment": "neutral", "safety_flags": [], "detected_keywords": []}
+    if media_type == "photo":
+        size_kb = len(file_bytes) / 1024
+        result["insights"].append("Photo reviewed" + (" — large file" if size_kb > 2000 else ""))
+        if "fall" in filename.lower() or "injury" in filename.lower():
+            result["safety_flags"].append({"type": "potential_injury", "detail": "Filename suggests injury documentation"})
+            result["sentiment"] = "concern"
+    elif media_type == "audio":
+        transcribed = data.get("transcribed_text", "[Simulated transcription]")
+        result["insights"].append("Audio reviewed — key terms monitored")
+        keywords = [w for w in ["help", "pain", "fall", "nurse", "water"] if w in transcribed.lower()]
+        result["detected_keywords"] = keywords
+        if keywords:
+            result["safety_flags"].append({"type": "keyword_detected", "detail": f"Keywords: {', '.join(keywords[:3])}"})
+            result["sentiment"] = "attention"
+        result["transcribed_text"] = transcribed
+    analysis_id = str(uuid.uuid4())
+    now = datetime.now()
+    conn = get_db()
+    try:
+        q(conn,
+            "INSERT INTO public.media_analysis (id, facility_id, resident_id, media_url, media_type, analysis_status, summary, confidence, insights, detected_keywords, sentiment, safety_flags, transcribed_text, completed_at) "
+            "VALUES (:id, :fid, :rid, :url, :mtype, 'completed', :summary, :conf, :insights, :keywords, :sent, :flags, :transcript, :now)",
+            id=analysis_id, fid=facility_id, rid=resident_id, url=data.get("media_url", ""), mtype=media_type,
+            summary=result["summary"], conf=result["confidence"],
+            insights=json.dumps(result["insights"]), keywords=json.dumps(result["detected_keywords"]),
+            sent=result["sentiment"], flags=json.dumps(result["safety_flags"]),
+            transcript=result.get("transcribed_text", ""), now=now)
+    finally:
+        conn.close()
+    return json_response({"analysis_id": analysis_id, **result})
+
+
+@route("/ai/insights", method="POST")
+def ai_get_insights():
+    data = request.json or {}
+    facility_id = data.get("facility_id")
+    limit = data.get("limit", 20)
+    if not facility_id:
+        return HTTPResponse(status=400, body=json.dumps({"error": "facility_id required"}))
+    conn = get_db()
+    try:
+        rows = q(conn,
+            "SELECT ma.id, ma.facility_id, ma.resident_id, r.name, ma.media_url, ma.media_type, ma.analysis_status, ma.summary, ma.confidence, ma.insights, ma.detected_keywords, ma.sentiment, ma.safety_flags, ma.transcribed_text, ma.created_at, ma.completed_at "
+            "FROM public.media_analysis ma LEFT JOIN public.residents r ON r.id = ma.resident_id "
+            "WHERE ma.facility_id = :fid ORDER BY ma.created_at DESC LIMIT :lim", fid=facility_id, lim=limit)
+        return json_response([{
+            "id": str(r[0]), "facility_id": str(r[1]),
+            "resident_id": str(r[2]) if r[2] else None, "resident_name": r[3],
+            "media_url": r[4], "media_type": r[5], "analysis_status": r[6],
+            "summary": r[7], "confidence": r[8],
+            "insights": json.loads(r[9]) if isinstance(r[9], str) else r[9],
+            "detected_keywords": json.loads(r[10]) if isinstance(r[10], str) else r[10],
+            "sentiment": r[11],
+            "safety_flags": json.loads(r[12]) if isinstance(r[12], str) else r[12],
+            "transcribed_text": r[13],
+            "created_at": r[14].isoformat(), "completed_at": r[15].isoformat() if r[15] else None,
+        } for r in rows])
+    finally:
+        conn.close()
+
+
+@route("/ai/monitor/start", method="POST")
+def ai_start_monitor():
+    data = request.json or {}
+    facility_id = data.get("facility_id")
+    resident_id = data.get("resident_id")
+    started_by = data.get("started_by")
+    if not facility_id:
+        return HTTPResponse(status=400, body=json.dumps({"error": "facility_id required"}))
+    session_id = str(uuid.uuid4())
+    now = datetime.now()
+    conn = get_db()
+    try:
+        q(conn,
+            "INSERT INTO public.audio_monitoring_sessions (id, facility_id, resident_id, started_by, status, started_at) "
+            "VALUES (:id, :fid, :rid, :sid, 'active', :now)",
+            id=session_id, fid=facility_id, rid=resident_id, sid=started_by, now=now)
+    finally:
+        conn.close()
+    return json_response({"session_id": session_id, "status": "active", "started_at": now.isoformat()})
+
+
+@route("/ai/monitor/<session_id>/stop", method="POST")
+def ai_stop_monitor(session_id):
+    now = datetime.now()
+    conn = get_db()
+    try:
+        q(conn, "UPDATE public.audio_monitoring_sessions SET status='stopped', stopped_at=:now WHERE id=:sid",
+          sid=session_id, now=now)
+    finally:
+        conn.close()
+    return json_response({"session_id": session_id, "status": "stopped"})
+
+
+@route("/ai/monitor/<session_id>/event", method="POST")
+def ai_report_event(session_id):
+    data = request.json or {}
+    now = datetime.now()
+    conn = get_db()
+    try:
+        srows = q(conn, "SELECT facility_id FROM public.audio_monitoring_sessions WHERE id=:sid", sid=session_id)
+        if not srows:
+            return HTTPResponse(status=404, body=json.dumps({"error": "session not found"}))
+        facility_id = srows[0][0]
+        event_id = str(uuid.uuid4())
+        q(conn,
+            "INSERT INTO public.audio_monitoring_events (id, session_id, facility_id, resident_id, event_type, keyword, confidence, transcript_snippet, audio_level, detected_at) "
+            "VALUES (:eid, :sid, :fid, :rid, :etype, :kw, :conf, :snippet, :level, :now)",
+            eid=event_id, sid=session_id, fid=facility_id, rid=data.get("resident_id"),
+            etype=data.get("event_type", "unknown"), kw=data.get("keyword"),
+            conf=data.get("confidence", 0.0), snippet=data.get("transcript_snippet"),
+            level=data.get("audio_level"), now=now)
+        q(conn, "UPDATE public.audio_monitoring_sessions SET last_event_at=:now WHERE id=:sid",
+          sid=session_id, now=now)
+    finally:
+        conn.close()
+    return json_response({"event_id": event_id, "detected_at": now.isoformat()})
+
+
+@route("/ai/events/recent", method="POST")
+def ai_recent_events():
+    data = request.json or {}
+    facility_id = data.get("facility_id")
+    hours = data.get("hours", 24)
+    if not facility_id:
+        return HTTPResponse(status=400, body=json.dumps({"error": "facility_id required"}))
+    conn = get_db()
+    try:
+        rows = q(conn,
+            "SELECT e.id, e.session_id, e.facility_id, e.resident_id, r.name, e.event_type, e.keyword, e.confidence, e.transcript_snippet, e.audio_level, e.detected_at, e.acknowledged "
+            "FROM public.audio_monitoring_events e LEFT JOIN public.residents r ON r.id = e.resident_id "
+            "WHERE e.facility_id=:fid AND e.detected_at >= now() - (:h||' hours')::interval "
+            "ORDER BY e.detected_at DESC LIMIT 100", fid=facility_id, h=hours)
+        return json_response([{
+            "id": str(r[0]), "session_id": str(r[1]), "facility_id": str(r[2]),
+            "resident_id": str(r[3]) if r[3] else None, "resident_name": r[4],
+            "event_type": r[5], "keyword": r[6], "confidence": r[7],
+            "transcript_snippet": r[8], "audio_level": r[9],
+            "detected_at": r[10].isoformat(), "acknowledged": r[11],
+        } for r in rows])
     finally:
         conn.close()
 

@@ -4,6 +4,7 @@ public protocol ResidentsRepositoryProtocol: AnyObject {
   func getResidents(facilityId: UUID) async throws -> [ResidentDTO]
   func getFallCount(residentId: UUID, days: Int) async throws -> Int
   func getTimeline(residentId: UUID, limit: Int) async throws -> [TimelineEntryDTO]
+  func recordVitalEvent(facilityId: UUID, residentId: UUID, metric: String, value: Double, timestamp: Date) async throws
 }
 
 public final class ResidentsRepository: ResidentsRepositoryProtocol {

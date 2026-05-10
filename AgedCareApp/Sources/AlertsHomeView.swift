@@ -26,6 +26,8 @@ struct AlertsHomeView: View {
           Button { Task { await vm.loadAlerts() } } label: {
             Image(systemName: "arrow.clockwise")
           }
+          .accessibilityLabel("Refresh alerts")
+          .accessibilityHint("Reloads the alert list")
         }
       }
       .onAppear {
@@ -34,6 +36,7 @@ struct AlertsHomeView: View {
       .task {
         await vm.loadAlerts()
       }
+      .accessibilityElement(children: .contain)
     }
   }
 
@@ -47,6 +50,8 @@ struct AlertsHomeView: View {
       }
       .padding(.horizontal)
     }
+    .accessibilityLabel("Alert filters")
+    .accessibilityHint("Filter which alerts are shown")
   }
 
   private func filterChip(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -59,6 +64,9 @@ struct AlertsHomeView: View {
         .foregroundColor(selected ? .white : .primary)
         .cornerRadius(999)
     }
+    .accessibilityLabel("\(title) filter")
+    .accessibilityValue(selected ? "Selected" : "Not selected")
+    .accessibilityHint("Shows \(title.lowercased()) alerts")
   }
 
   private var alertList: some View {
@@ -70,10 +78,18 @@ struct AlertsHomeView: View {
       }
     }
     .overlay {
-      if vm.isLoading { ProgressView("Loading\u{2026}") }
-      else if let error = vm.loadError { Text(error).foregroundColor(.red).padding() }
-      else if vm.filteredAlerts.isEmpty { Text("No alerts").foregroundColor(.secondary) }
+      if vm.isLoading {
+        ProgressView("Loading\u{2026}")
+          .accessibilityLabel("Loading alerts")
+      } else if let error = vm.loadError {
+        Text(error).foregroundColor(.red).padding()
+          .accessibilityLabel("Error loading alerts: \(error)")
+      } else if vm.filteredAlerts.isEmpty {
+        Text("No alerts").foregroundColor(.secondary)
+          .accessibilityLabel("No alerts to show")
+      }
     }
+    .accessibilityLabel("Alert list")
   }
 }
 
@@ -97,12 +113,17 @@ struct RichAlertRow: View {
       }
     }
     .padding(.vertical, 6)
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel("\(alert.typeDisplay) alert, priority \(alert.priority), resident identifier \(alert.residentId.uuidString.prefix(8))")
+    .accessibilityValue("Status: \(alert.status), created at \(alert.createdAt.formatted(date: .omitted, time: .shortened))")
+    .accessibilityHint("Opens alert details")
   }
 
   private var priorityIndicator: some View {
     RoundedRectangle(cornerRadius: 4)
       .fill(alert.priorityColor)
       .frame(width: 6)
+      .accessibilityHidden(true)
   }
 }
 

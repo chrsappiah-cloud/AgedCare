@@ -6,7 +6,6 @@ final class DependencyContainer: ObservableObject {
   let alertsRepository: AlertsRepository
   let residentsRepository: ResidentsRepository
   let facilityRepository: FacilityRepository
-
   init() {
     let config = SupabaseConfig(
       baseURL: AppHost.baseURL,

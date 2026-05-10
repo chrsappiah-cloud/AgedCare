@@ -16,11 +16,11 @@ final class MonitoringCoordinator: ObservableObject {
   private let facilityId: UUID
   private let residentId: UUID
   private let alertsRepository: AlertsRepositoryProtocol
-  private let residentsRepository: ResidentsRepository
+  private let residentsRepository: ResidentsRepositoryProtocol
   private var healthTask: Task<Void, Never>?
   private var vitalEventTask: Task<Void, Never>?
 
-  init(fallService: FallService, facilityId: UUID, residentId: UUID, alertsRepository: AlertsRepositoryProtocol, residentsRepository: ResidentsRepository) {
+  init(fallService: FallService, facilityId: UUID, residentId: UUID, alertsRepository: AlertsRepositoryProtocol, residentsRepository: ResidentsRepositoryProtocol) {
     self.fallService = fallService
     self.facilityId = facilityId
     self.residentId = residentId

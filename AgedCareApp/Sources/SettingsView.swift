@@ -42,6 +42,12 @@ struct SettingsView: View {
           LabeledContent("Facility ID", value: staff.facilityId.uuidString.prefix(8).description)
         }
 
+        Section("Developer") {
+          NavigationLink(destination: WatchPreviewView()) {
+            Label("Watch Preview", systemImage: "applewatch")
+          }
+        }
+
         Section {
           NavigationLink(destination: Text("Report a problem – contact support\nsupport@agedcare.app")
             .multilineTextAlignment(.center)
