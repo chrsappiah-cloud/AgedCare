@@ -52,6 +52,24 @@ struct SettingsView: View {
         .listRowBackground(AppTheme.surface)
 
         Section {
+          NavigationLink(destination: UpcomingPlansView()) {
+            Label("Plans & Pricing", systemImage: "creditcard.fill")
+              .foregroundColor(AppTheme.emeraldGreen)
+          }
+          .accessibilityLabel("Plans and pricing")
+          .accessibilityHint("View subscription plans, waitlist, and pilot request options")
+
+          NavigationLink(destination: SocialLinksView()) {
+            Label("Share & Follow Us", systemImage: "square.and.arrow.up")
+              .foregroundColor(AppTheme.emeraldGreen)
+          }
+          .accessibilityLabel("Share and social media links")
+        } header: {
+          Text("Subscriptions & Marketing").sectionHeaderStyle()
+        }
+        .listRowBackground(AppTheme.surface)
+
+        Section {
           NavigationLink(destination: WatchPreviewView()) {
             Label("Watch Preview", systemImage: "applewatch")
               .foregroundColor(AppTheme.emeraldGreen)
