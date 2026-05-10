@@ -1,6 +1,5 @@
 import SwiftUI
 import AVFoundation
-import AgedCareShared
 
 struct AudioMonitorView: View {
   let staff: StaffUserModel
@@ -321,7 +320,7 @@ struct AudioMonitorView: View {
 
   private func eventIcon(_ type: String) -> String {
     switch type {
-    case "keyword_detected": return "waveform.path.mic"
+    case "keyword_detected": return "mic.badge.xmark"
     case "distress_sound": return "exclamationmark.triangle"
     case "fall_sound": return "figure.fall"
     case "call_for_help": return "hand.raised"

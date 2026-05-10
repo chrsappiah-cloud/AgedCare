@@ -9,7 +9,7 @@ struct LoginView: View {
     VStack(spacing: 24) {
       Spacer()
 
-      Image(systemName: "person.fill.badge.shield.checkmark")
+      Image(systemName: "person.badge.key.fill")
         .font(.system(size: 60))
         .foregroundColor(AppTheme.emeraldGreen)
         .accessibilityHidden(true)

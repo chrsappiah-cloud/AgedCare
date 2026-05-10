@@ -203,7 +203,7 @@ struct WCSMarketingConfig {
             appId: "6766951084",
             category: "Medical Education",
             tagline: "Medical terminology and language learning for healthcare professionals",
-            icon: "textbook.fill",
+            icon: "book.fill",
             tier: "Pro",
             price: "$4.99/mo",
             platform: "iOS",

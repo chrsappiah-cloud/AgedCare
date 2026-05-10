@@ -116,7 +116,7 @@ struct UnifiedShellView: View {
                 staffOnlyPlaceholder(feature: "AI Monitor")
             }
         }
-        .tabItem { Label("AI Monitor", systemImage: "waveform.eye") }
+        .tabItem { Label("AI Monitor", systemImage: "waveform.and.magnifyingglass") }
         .tag(Tab.aiMonitor)
         .accessibilityLabel("AI Monitoring tab")
         .badge(isStaff ? aiBadgeCount + handoffBadgeCount : 0)
@@ -289,7 +289,7 @@ struct ResidentPreviewForStaff: View {
                 VStack(spacing: 12) {
                     QuickNavRow(icon: "bell.badge.fill", title: "Alerts", description: "View and manage real-time alerts")
                     QuickNavRow(icon: "person.3.fill", title: "Residents", description: "Browse resident profiles and timelines")
-                    QuickNavRow(icon: "waveform.eye", title: "AI Monitor", description: "Camera and sensor insights")
+                    QuickNavRow(icon: "waveform.and.magnifyingglass", title: "AI Monitor", description: "Camera and sensor insights")
                     QuickNavRow(icon: "chart.bar.doc.horizontal.fill", title: "Insights", description: "Facility statistics and trends")
                 }
                 .padding(.top, 8)

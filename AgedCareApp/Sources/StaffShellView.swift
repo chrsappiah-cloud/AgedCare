@@ -25,7 +25,7 @@ struct StaffShellView: View {
 
       MediaInsightsDashboardView(staff: staff)
         .tabItem {
-          Label("AI Monitor", systemImage: "waveform.eye")
+          Label("AI Monitor", systemImage: "waveform.and.magnifyingglass")
         }
         .accessibilityLabel("AI Monitoring tab")
         .badge(aiBadgeCount + handoffBadgeCount)

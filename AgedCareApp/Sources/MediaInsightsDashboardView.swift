@@ -1,5 +1,4 @@
 import SwiftUI
-import AgedCareShared
 
 struct MediaInsightsDashboardView: View {
   let staff: StaffUserModel
@@ -14,8 +13,8 @@ struct MediaInsightsDashboardView: View {
 
     var icon: String {
       switch self {
-      case .media: return "waveform.eye"
-      case .events: return "exclamationmark.bell"
+      case .media: return "waveform.and.magnifyingglass"
+      case .events: return "bell.badge.fill"
       case .sessions: return "radio"
       }
     }
@@ -83,7 +82,7 @@ struct MediaInsightsDashboardView: View {
       if ai.recentInsights.isEmpty && !ai.isLoading {
         ContentUnavailableView(
           "No Insights Yet",
-          systemImage: "waveform.eye",
+          systemImage: "waveform.and.magnifyingglass",
           description: Text("Media you upload will be analyzed here by AI")
         )
       }
@@ -102,7 +101,7 @@ struct MediaInsightsDashboardView: View {
       if ai.recentEvents.isEmpty && !ai.isLoading {
         ContentUnavailableView(
           "No Recent Events",
-          systemImage: "exclamationmark.bell",
+          systemImage: "bell.badge.fill",
           description: Text("Audio monitoring events will appear here in real time")
         )
       }
