@@ -7,6 +7,7 @@ struct AudioRecorderView: View {
 
   @State private var isRecording = false
   @State private var recordedURL: URL?
+  @State private var audioRecorder: AVAudioRecorder?
   @State private var audioPlayer: AVAudioPlayer?
   @State private var isPlaying = false
   @State private var recordingDuration: TimeInterval = 0
@@ -73,17 +74,22 @@ struct AudioRecorderView: View {
 
     guard let recorder = try? AVAudioRecorder(url: url, settings: settings) else { return }
     recorder.record()
+    audioRecorder = recorder
     isRecording = true
     recordedURL = nil
     recordingDuration = 0
 
-    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-      recordingDuration = recorder.currentTime
+    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak recorder] _ in
+      recordingDuration = recorder?.currentTime ?? 0
     }
     timer?.fire()
   }
 
   private func stopRecording() {
+    guard let recorder = audioRecorder else { return }
+    recorder.stop()
+    recordedURL = recorder.url
+    audioRecorder = nil
     timer?.invalidate()
     timer = nil
     isRecording = false

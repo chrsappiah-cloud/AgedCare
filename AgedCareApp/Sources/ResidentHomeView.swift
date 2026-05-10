@@ -124,11 +124,11 @@ struct ResidentHomeView: View {
   }
 
   private var callStaffCard: some View {
-    Button(action: { handoff.requestStaff(
+    Button(action: { Task { await handoff.requestStaff(
       facilityId: facilityId.uuidString,
       residentId: residentId.uuidString,
       residentName: "Room \(residentId.uuidString.prefix(6))"
-    )}) {
+    )}}) {
       HStack(spacing: 12) {
         Image(systemName: "bell.and.waves.left.and.right.fill")
           .font(.title2)

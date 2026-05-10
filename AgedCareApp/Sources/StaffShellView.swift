@@ -126,12 +126,14 @@ struct HandoffRequestView: View {
 
       VStack(spacing: 12) {
         Button(action: {
-          handoff.staffTakeover(
-            staffId: staff.id.uuidString,
-            staffName: staff.displayName ?? staff.role,
-            facilityId: facilityId,
-            session: session
-          )
+          Task {
+            await handoff.staffTakeover(
+              staffId: staff.id.uuidString,
+              staffName: staff.displayName ?? staff.role,
+              facilityId: facilityId,
+              session: session
+            )
+          }
           dismiss()
         }) {
           Label("Respond to \(residentName)", systemImage: "person.fill.checkmark")

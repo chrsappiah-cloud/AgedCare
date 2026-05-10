@@ -1,5 +1,5 @@
 import SwiftUI
-import AVFoundation
+import AVKit
 import AgedCareShared
 
 struct MediaAttachmentView: View {
@@ -23,6 +23,7 @@ struct MediaAttachmentView: View {
 
 private struct MediaThumbnail: View {
   let attachment: MediaAttachment
+  @State private var showVideoPlayer = false
 
   var body: some View {
     Group {
@@ -37,7 +38,12 @@ private struct MediaThumbnail: View {
     }
     .clipShape(RoundedRectangle(cornerRadius: 8))
     .frame(height: 80)
-    .onTapGesture { play() }
+    .onTapGesture { handleTap() }
+    .fullScreenCover(isPresented: $showVideoPlayer) {
+      if let url = attachment.localURL ?? attachment.remoteURL {
+        VideoPlayerView(url: url)
+      }
+    }
   }
 
   private var photoView: some View {
@@ -71,15 +77,14 @@ private struct MediaThumbnail: View {
     }
   }
 
-  private func play() {
+  private func handleTap() {
     guard let url = attachment.localURL ?? attachment.remoteURL else { return }
     switch attachment.type {
     case .audio:
       let player = try? AVAudioPlayer(contentsOf: url)
       player?.play()
     case .video:
-      let player = AVPlayer(url: url)
-      player.play()
+      showVideoPlayer = true
     case .photo:
       break
     }

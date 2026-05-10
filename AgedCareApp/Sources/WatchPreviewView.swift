@@ -27,8 +27,10 @@ struct WatchPreviewView: View {
 
   private var watchHeader: some View {
     HStack {
-      Circle().fill(.green).frame(width: 6, height: 6)
-      Text("Connected")
+      Circle()
+        .fill(vm.isWatchReachable ? .green : .red)
+        .frame(width: 6, height: 6)
+      Text(vm.isWatchReachable ? "Connected" : "Disconnected")
         .font(.caption2)
         .foregroundColor(.secondary)
       Spacer()
@@ -212,13 +214,25 @@ final class WatchPreviewViewModel: ObservableObject {
   @Published var bloodOxygen = "--"
   @Published var statusText = "Disconnected"
   @Published var isMonitoringActive = false
+  @Published var isWatchReachable = false
   @Published var lastSync = Date()
   @Published var alerts: [PreviewAlert] = []
 
-  struct PreviewAlert: Identifiable {
+  struct PreviewAlert: Identifiable, Codable {
     let id = UUID()
     let summary: String
     let priority: Int
+  }
+
+  init() {
+    isWatchReachable = WatchConnectivityService.shared.isReachable
+    NotificationCenter.default.addObserver(
+      forName: .init("WCSessionReachabilityChanged"),
+      object: nil,
+      queue: .main
+    ) { [weak self] _ in
+      self?.isWatchReachable = WatchConnectivityService.shared.isReachable
+    }
   }
 
   func sendSOS() {
@@ -236,6 +250,12 @@ final class WatchPreviewViewModel: ObservableObject {
     lastSync = Date()
     statusText = "Monitoring"
     isMonitoringActive = true
+    WatchConnectivityService.shared.sendVitalUpdate(
+      facilityId: "preview",
+      residentId: "preview",
+      metric: "heart_rate",
+      value: Double(heartRate) ?? 0
+    )
   }
 
   func simulateAlert() {
@@ -247,5 +267,9 @@ final class WatchPreviewViewModel: ObservableObject {
     alerts.insert(alert, at: 0)
     if alerts.count > 10 { alerts = Array(alerts.prefix(10)) }
     lastSync = Date()
+    if let data = try? JSONEncoder().encode(alert),
+       let json = String(data: data, encoding: .utf8) {
+      WatchConnectivityService.shared.sendAlertUpdate(alertJSON: json)
+    }
   }
 }

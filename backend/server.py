@@ -196,6 +196,35 @@ def rpc_handler(rpc_name):
                 "role": r[2], "display_name": r[3],
             })
 
+        elif rpc_name == "create_handoff_request":
+            q(conn,
+                "INSERT INTO public.alerts (facility_id, resident_id, type, status, priority, notes) "
+                "VALUES (:fid, :rid, 'handoff_request', 'open', 2, :notes)",
+                fid=body["p_facility_id"], rid=body["p_resident_id"],
+                notes=body.get("p_notes", "Resident requested staff assistance"))
+            response.status = 204
+            return ""
+
+        elif rpc_name == "get_pending_handoffs":
+            rows = q(conn,
+                "SELECT id, facility_id, resident_id, created_at, notes "
+                "FROM public.alerts WHERE type='handoff_request' AND status='open' "
+                "AND facility_id=:fid ORDER BY created_at DESC LIMIT 20",
+                fid=body["p_facility_id"])
+            return json_response([
+                {"id": r[0], "facility_id": str(r[1]), "resident_id": str(r[2]),
+                 "created_at": r[3].isoformat() if r[3] else None, "notes": r[4]}
+                for r in rows
+            ])
+
+        elif rpc_name == "resolve_handoff_request":
+            q(conn,
+                "UPDATE public.alerts SET status='closed', acknowledged_at=now() "
+                "WHERE id=:aid AND type='handoff_request'",
+                aid=body["p_alert_id"])
+            response.status = 204
+            return ""
+
         else:
             return HTTPResponse(status=404, body=json.dumps({"error": f"unknown rpc: {rpc_name}"}))
 

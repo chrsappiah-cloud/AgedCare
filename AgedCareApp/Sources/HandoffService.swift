@@ -1,6 +1,7 @@
 import Foundation
 import UserNotifications
 import UIKit
+import AgedCareShared
 
 enum HandoffAction: Codable, Equatable {
   case requestStaff(facilityId: String, residentId: String, residentName: String)
@@ -33,27 +34,50 @@ final class HandoffService: NSObject, ObservableObject {
 
   @Published var pendingHandoff: HandoffAction?
   @Published var activeTransferToken: String?
+  @Published var pendingRequests: [HandoffRequest] = []
+
+  struct HandoffRequest: Identifiable, Decodable {
+    let id: Int
+    let facilityId: String
+    let residentId: String
+    let createdAt: String?
+    let notes: String?
+  }
 
   private var handoffCallback: ((HandoffAction) -> Void)?
+  private let baseURL = AppHost.baseURL
 
   func startListening(callback: @escaping (HandoffAction) -> Void) {
     handoffCallback = callback
     registerForPushHandoffs()
   }
 
-  func requestStaff(facilityId: String, residentId: String, residentName: String) {
+  func requestStaff(facilityId: String, residentId: String, residentName: String) async {
     let action = HandoffAction.requestStaff(facilityId: facilityId, residentId: residentId, residentName: residentName)
     pendingHandoff = action
     postLocalNotification(for: action)
     handoffCallback?(action)
+    try? await callRPC("create_handoff_request", body: [
+      "p_facility_id": facilityId,
+      "p_resident_id": residentId,
+      "p_notes": "\(residentName) requested staff assistance",
+    ])
   }
 
-  func staffTakeover(staffId: String, staffName: String, facilityId: String, session: SessionViewModel) {
+  func staffTakeover(staffId: String, staffName: String, facilityId: String, session: SessionViewModel) async {
     let action = HandoffAction.staffTakeover(staffId: staffId, staffName: staffName, facilityId: facilityId)
-    pendingHandoff = action
+    pendingHandoff = nil
     postLocalNotification(for: action)
-    session.state = .onboarding
+    try? await callRPC("resolve_handoff_request", body: ["p_alert_id": activeTransferToken ?? ""])
+    clearHandoff()
     handoffCallback?(action)
+  }
+
+  func fetchPendingRequests(facilityId: String) async {
+    guard let data = try? await callRPC("get_pending_handoffs", body: ["p_facility_id": facilityId]) else { return }
+    if let requests = try? JSONDecoder().decode([HandoffRequest].self, from: data) {
+      pendingRequests = requests
+    }
   }
 
   func acceptHandoff(token: String) {
@@ -63,6 +87,17 @@ final class HandoffService: NSObject, ObservableObject {
   func clearHandoff() {
     pendingHandoff = nil
     activeTransferToken = nil
+  }
+
+  private func callRPC(_ name: String, body: [String: Any]) async throws -> Data? {
+    let url = baseURL.appendingPathComponent("/rest/v1/rpc/\(name)")
+    var req = URLRequest(url: url)
+    req.httpMethod = "POST"
+    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    req.httpBody = try JSONSerialization.data(withJSONObject: body)
+    let (data, resp) = try await URLSession.shared.data(for: req)
+    guard let http = resp as? HTTPURLResponse, http.statusCode < 300 else { return nil }
+    return data
   }
 
   private func registerForPushHandoffs() {
