@@ -63,7 +63,6 @@ public final class CloudKitAlertSync: @unchecked Sendable {
 
   public func alertFromRecord(_ record: CKRecord) -> AlertModel? {
     guard
-      let facilityId = record["facilityId"] as? String,
       let residentId = record["residentId"] as? String,
       let type = record["type"] as? String,
       let status = record["status"] as? String,
@@ -157,10 +156,10 @@ public final class CloudKitAlertSync: @unchecked Sendable {
     do {
       let record = try await sharedDB.record(for: recordID)
       if let alert = alertFromRecord(record) {
-        await alertUpdateHandler?(alert, queryNotification.queryNotificationReason)
+        alertUpdateHandler?(alert, queryNotification.queryNotificationReason)
       }
     } catch {
-      await alertErrorHandler?(error)
+      alertErrorHandler?(error)
     }
   }
 

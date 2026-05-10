@@ -163,9 +163,8 @@ final class AIMonitoringService: ObservableObject {
     pollTimer = nil
   }
 
-  nonisolated deinit {
-    Task { @MainActor in
-      AIMonitoringService.shared.stopPolling()
-    }
+  deinit {
+    pollTimer?.invalidate()
+    pollTimer = nil
   }
 }

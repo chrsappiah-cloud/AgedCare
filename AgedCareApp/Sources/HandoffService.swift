@@ -113,7 +113,7 @@ final class HandoffService: NSObject, ObservableObject {
 }
 
 extension HandoffService: UNUserNotificationCenterDelegate {
-  nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+  func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
     let userInfo = response.notification.request.content.userInfo
     guard userInfo["handoff"] as? Bool == true else {
       completionHandler()
@@ -125,7 +125,7 @@ extension HandoffService: UNUserNotificationCenterDelegate {
     }
   }
 
-  nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+  func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
     let userInfo = notification.request.content.userInfo
     if userInfo["handoff"] as? Bool == true {
       completionHandler([.banner, .sound, .list])
