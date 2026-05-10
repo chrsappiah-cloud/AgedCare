@@ -24,6 +24,7 @@ struct SocialLinksView: View {
             categoryFilter
             appProductsSection
             paymentSection
+            founderSection
             footerSection
         }
         .scrollContentBackground(.hidden)
@@ -189,6 +190,86 @@ struct SocialLinksView: View {
                     Image(systemName: "arrow.up.right.square")
                         .font(.caption)
                         .foregroundColor(AppTheme.textSecondary)
+                }
+            }
+        }
+    }
+
+    // MARK: - Founder
+
+    private var founderSection: some View {
+        Section("Founder & Creator") {
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.title)
+                    .foregroundColor(AppTheme.emeraldGreen)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Dr Christopher Appiah-Thompson")
+                        .font(.subheadline.bold())
+                        .foregroundColor(AppTheme.textPrimary)
+                    Text("CEO, World Class Scholars")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Button {
+                openURL(WCSMarketingConfig.personalLinkURL)
+            } label: {
+                HStack {
+                    Image(systemName: "link")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("christopherappiahthompson.link")
+                        .foregroundColor(AppTheme.textPrimary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Button {
+                openURL(WCSMarketingConfig.gumroadURL)
+            } label: {
+                HStack {
+                    Image(systemName: "bag.fill")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("Gumroad — Art & Digital Works")
+                        .foregroundColor(AppTheme.textPrimary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Button {
+                openURL(WCSMarketingConfig.twineURL)
+            } label: {
+                HStack {
+                    Image(systemName: "briefcase.fill")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("Twine — Professional Portfolio")
+                        .foregroundColor(AppTheme.textPrimary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Button {
+                openURL(WCSMarketingConfig.myworldclassURL)
+            } label: {
+                HStack {
+                    Image(systemName: "graduationcap.fill")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("myworldclass.org")
+                        .foregroundColor(AppTheme.textPrimary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
         }

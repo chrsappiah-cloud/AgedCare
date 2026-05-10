@@ -2,20 +2,25 @@ import SwiftUI
 
 struct UpcomingPlansView: View {
     @StateObject private var subscriptions = SubscriptionService.shared
+    @StateObject private var analytics = BetaAnalytics.shared
     @State private var selectedTier: SubscriptionTier?
     @State private var showWaitlist = false
     @State private var showPilotForm = false
     @State private var waitlistEmail = ""
     @State private var showConfirmation = false
+    @State private var showFeedback = false
     @Environment(\.openURL) private var openURL
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 headerSection
+                currentPhaseBanner
                 tierCards
+                demandSignalSection
                 socialSection
                 paymentLinksSection
+                founderSection
                 footerSection
             }
             .padding()
@@ -25,6 +30,9 @@ struct UpcomingPlansView: View {
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showWaitlist) { waitlistSheet }
         .sheet(isPresented: $showPilotForm) { pilotFormSheet }
+        .sheet(isPresented: $showFeedback) {
+            NavigationStack { BetaFeedbackView() }
+        }
         .alert("You're on the list!", isPresented: $showConfirmation) {
             Button("OK") {}
         } message: {
@@ -51,8 +59,42 @@ struct UpcomingPlansView: View {
                 .font(.subheadline)
                 .foregroundColor(AppTheme.textSecondary)
                 .multilineTextAlignment(.center)
+
+            Text("Simple pricing. Clear value. No pressure.")
+                .font(.caption)
+                .foregroundColor(AppTheme.emeraldGreen)
         }
         .padding(.bottom, 8)
+    }
+
+    // MARK: - Current Phase Banner
+
+    private var currentPhaseBanner: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "airplane")
+                .font(.title3)
+                .foregroundColor(.white)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("TestFlight Beta")
+                    .font(.subheadline.bold())
+                    .foregroundColor(.white)
+                Text("We're learning from your feedback. All features are free during beta.")
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.85))
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(
+            LinearGradient(
+                colors: [AppTheme.emeraldGreen, AppTheme.emeraldGreen.opacity(0.8)],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .cornerRadius(14)
     }
 
     // MARK: - Tier Cards
@@ -63,10 +105,66 @@ struct UpcomingPlansView: View {
                 TierCard(
                     tier: tier,
                     isCurrentPlan: subscriptions.currentTier == tier,
+                    tapCount: analytics.planInterestCounts[tier.rawValue] ?? 0,
                     onSelect: { handleTierSelect(tier) }
                 )
             }
         }
+    }
+
+    // MARK: - Demand Signal Section
+
+    private var demandSignalSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Help Us Build What You Need")
+                .font(.headline)
+                .foregroundColor(AppTheme.textPrimary)
+
+            Text("Tap a plan above to signal your interest. We track demand to decide which features to prioritize.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Button {
+                showFeedback = true
+            } label: {
+                HStack {
+                    Image(systemName: "bubble.left.and.text.bubble.right.fill")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("Share Beta Feedback")
+                        .font(.subheadline.bold())
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(12)
+                .background(AppTheme.emeraldGreen.opacity(0.1))
+                .cornerRadius(10)
+            }
+
+            NavigationLink {
+                GrowthRoadmapView()
+            } label: {
+                HStack {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Text("View 12-Month Growth Roadmap")
+                        .font(.subheadline.bold())
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(12)
+                .background(AppTheme.emeraldGreen.opacity(0.1))
+                .cornerRadius(10)
+            }
+        }
+        .padding()
+        .background(AppTheme.surface)
+        .cornerRadius(16)
     }
 
     // MARK: - Social Media
@@ -77,20 +175,20 @@ struct UpcomingPlansView: View {
                 .font(.headline)
                 .foregroundColor(AppTheme.textPrimary)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                 ForEach(WCSMarketingConfig.socialLinks, id: \.name) { link in
                     Button {
                         openURL(link.url)
                     } label: {
-                        VStack(spacing: 6) {
+                        VStack(spacing: 4) {
                             Image(systemName: link.icon)
                                 .font(.title3)
-                                .frame(width: 40, height: 40)
+                                .frame(width: 38, height: 38)
                                 .background(AppTheme.emeraldGreen.opacity(0.15))
                                 .foregroundColor(AppTheme.emeraldGreen)
                                 .clipShape(Circle())
-                            Text(link.name)
-                                .font(.caption2)
+                            Text(link.handle)
+                                .font(.system(size: 8))
                                 .foregroundColor(AppTheme.textSecondary)
                                 .lineLimit(1)
                         }
@@ -156,6 +254,54 @@ struct UpcomingPlansView: View {
         .cornerRadius(16)
     }
 
+    // MARK: - Founder Section
+
+    private var founderSection: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.title)
+                    .foregroundColor(AppTheme.emeraldGreen)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Dr Christopher Appiah-Thompson")
+                        .font(.subheadline.bold())
+                        .foregroundColor(AppTheme.textPrimary)
+                    Text("CEO, World Class Scholars")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    openURL(WCSMarketingConfig.personalLinkURL)
+                } label: {
+                    Text("christopherappiahthompson.link")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.emeraldGreen)
+                }
+                Button {
+                    openURL(WCSMarketingConfig.gumroadURL)
+                } label: {
+                    Text("Gumroad")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.emeraldGreen)
+                }
+                Button {
+                    openURL(WCSMarketingConfig.twineURL)
+                } label: {
+                    Text("Twine")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.emeraldGreen)
+                }
+            }
+        }
+        .padding()
+        .background(AppTheme.surface)
+        .cornerRadius(16)
+    }
+
     // MARK: - Footer
 
     private var footerSection: some View {
@@ -184,6 +330,7 @@ struct UpcomingPlansView: View {
 
     private func handleTierSelect(_ tier: SubscriptionTier) {
         subscriptions.trackPlanTap(tier)
+        analytics.logPlanInterest(tier.rawValue)
         switch tier {
         case .starter:
             break
@@ -211,6 +358,24 @@ struct UpcomingPlansView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Care Pro includes:")
+                        .font(.caption.bold())
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    ForEach(SubscriptionTier.carePro.features, id: \.self) { f in
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark")
+                                .font(.caption2)
+                                .foregroundColor(AppTheme.emeraldGreen)
+                            Text(f)
+                                .font(.caption)
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+
                 TextField("Your email", text: $waitlistEmail)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
@@ -220,6 +385,7 @@ struct UpcomingPlansView: View {
                     .cornerRadius(10)
 
                 Button {
+                    analytics.logEvent("waitlist_signup", payload: ["tier": "care_pro", "email": waitlistEmail])
                     showWaitlist = false
                     showConfirmation = true
                 } label: {
@@ -263,20 +429,39 @@ struct UpcomingPlansView: View {
                 Text("Request a Pilot")
                     .font(.title2.bold())
 
-                Text("For clinics, residential care groups, and dementia support providers.\nCustom onboarding, staff reporting, and shared care plans.")
+                Text("For clinics, residential care groups, and dementia support providers.\n8-12 week structured pilot with clear success criteria.")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Pilot includes:")
+                        .font(.caption.bold())
+                        .foregroundColor(AppTheme.emeraldGreen)
+                    ForEach(["Custom onboarding materials", "Dedicated pilot success dashboard", "Staff reporting & shared care plans", "Clear engagement & satisfaction metrics"], id: \.self) { item in
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark")
+                                .font(.caption2)
+                                .foregroundColor(AppTheme.emeraldGreen)
+                            Text(item)
+                                .font(.caption)
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+
                 VStack(spacing: 12) {
                     InfoLinkRow(icon: "globe", text: "Submit pilot request online", url: WCSMarketingConfig.pilotFormURL)
                     InfoLinkRow(icon: "envelope.fill", text: WCSMarketingConfig.supportEmail, url: URL(string: "mailto:\(WCSMarketingConfig.supportEmail)?subject=Care%20Team%20Pilot%20Request")!)
-                    InfoLinkRow(icon: "link", text: "wcs-full.vercel.app", url: WCSMarketingConfig.websiteURL)
+                    InfoLinkRow(icon: "link", text: "christopherappiahthompson.link", url: WCSMarketingConfig.personalLinkURL)
                 }
 
                 Spacer()
 
                 Button {
+                    analytics.logEvent("pilot_request", payload: ["tier": "care_team"])
                     openURL(WCSMarketingConfig.pilotFormURL)
                     showPilotForm = false
                 } label: {
@@ -306,6 +491,7 @@ struct UpcomingPlansView: View {
 private struct TierCard: View {
     let tier: SubscriptionTier
     let isCurrentPlan: Bool
+    let tapCount: Int
     let onSelect: () -> Void
 
     var body: some View {
@@ -326,6 +512,15 @@ private struct TierCard: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(AppTheme.emeraldGreen)
+                                .foregroundColor(.white)
+                                .cornerRadius(4)
+                        }
+                        if tier == .carePro {
+                            Text("COMING SOON")
+                                .font(.caption2.bold())
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.orange)
                                 .foregroundColor(.white)
                                 .cornerRadius(4)
                         }
@@ -366,6 +561,13 @@ private struct TierCard: View {
                         .background(tier == .carePro ? AppTheme.emeraldGreen : AppTheme.emeraldGreen.opacity(0.15))
                         .foregroundColor(tier == .carePro ? .white : AppTheme.emeraldGreen)
                         .cornerRadius(10)
+                }
+
+                if tapCount > 0 {
+                    Text("\(tapCount) people interested")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity)
                 }
             }
         }

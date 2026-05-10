@@ -64,6 +64,18 @@ struct SettingsView: View {
               .foregroundColor(AppTheme.emeraldGreen)
           }
           .accessibilityLabel("Share and social media links")
+
+          NavigationLink(destination: GrowthRoadmapView()) {
+            Label("Growth Roadmap", systemImage: "chart.line.uptrend.xyaxis")
+              .foregroundColor(AppTheme.emeraldGreen)
+          }
+          .accessibilityLabel("12-month growth roadmap and beta strategy")
+
+          NavigationLink(destination: BetaFeedbackView()) {
+            Label("Beta Feedback", systemImage: "bubble.left.and.text.bubble.right.fill")
+              .foregroundColor(AppTheme.emeraldGreen)
+          }
+          .accessibilityLabel("Submit beta feedback")
         } header: {
           Text("Subscriptions & Marketing").sectionHeaderStyle()
         }
