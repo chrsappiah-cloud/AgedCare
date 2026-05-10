@@ -15,7 +15,8 @@ struct ResidentShellView: View {
         fallService: fallService,
         facilityId: facilityId,
         residentId: residentId,
-        alertsRepository: container.alertsRepository
+        alertsRepository: container.alertsRepository,
+        residentsRepository: container.residentsRepository
       ),
       facilityId: facilityId,
       residentId: residentId

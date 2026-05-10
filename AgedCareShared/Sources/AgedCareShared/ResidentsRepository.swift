@@ -27,4 +27,12 @@ public final class ResidentsRepository: ResidentsRepositoryProtocol {
     let req = GetTimelineRequest(p_resident_id: residentId.uuidString, p_limit: limit)
     return try await supabase.rpc("get_resident_timeline", payload: req)
   }
+
+  public func recordVitalEvent(facilityId: UUID, residentId: UUID, metric: String, value: Double, timestamp: Date) async throws {
+    let req = RecordVitalEventRequest(
+      p_facility_id: facilityId, p_resident_id: residentId,
+      p_metric: metric, p_value: value, p_timestamp: timestamp
+    )
+    try await supabase.rpcVoid("record_vital_event", payload: req)
+  }
 }

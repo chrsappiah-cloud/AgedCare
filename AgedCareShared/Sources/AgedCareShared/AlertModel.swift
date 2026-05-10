@@ -137,3 +137,23 @@ public struct FacilityStatsDTO: Decodable {
   public let open_alerts: Int
   public let avg_acknowledge_minutes: Int
 }
+
+// MARK: - Vital Events
+
+public struct RecordVitalEventRequest: Encodable {
+  public let p_facility_id: String
+  public let p_resident_id: String
+  public let p_metric: String
+  public let p_value: Double
+  public let p_timestamp: String
+
+  public init(p_facility_id: UUID, p_resident_id: UUID, p_metric: String, p_value: Double, p_timestamp: Date) {
+    self.p_facility_id = p_facility_id.uuidString
+    self.p_resident_id = p_resident_id.uuidString
+    self.p_metric = p_metric
+    self.p_value = p_value
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    self.p_timestamp = formatter.string(from: p_timestamp)
+  }
+}

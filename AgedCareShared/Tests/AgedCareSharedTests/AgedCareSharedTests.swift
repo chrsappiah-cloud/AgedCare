@@ -133,6 +133,145 @@ struct FallDetectionEventTests {
   }
 }
 
+struct VitalReadingTests {
+
+  @Test("VitalReading initializes correctly")
+  func vitalReadingInit() {
+    let date = Date()
+    let reading = VitalReading(type: "heart_rate", value: 72.0, unit: "count/min", timestamp: date)
+    #expect(reading.type == "heart_rate")
+    #expect(reading.value == 72.0)
+    #expect(reading.unit == "count/min")
+    #expect(reading.timestamp == date)
+  }
+}
+
+struct VitalAlertTests {
+
+  @Test("detectAbnormalVitals returns highHeartRate above 120")
+  func highHeartRate() {
+    let reading = VitalReading(type: "heart_rate", value: 130.0, unit: "count/min", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert != nil)
+    if case .highHeartRate(let r) = alert! {
+      #expect(r.value == 130.0)
+    } else {
+      Issue.record("Expected highHeartRate alert")
+    }
+  }
+
+  @Test("detectAbnormalVitals returns lowHeartRate below 40")
+  func lowHeartRate() {
+    let reading = VitalReading(type: "heart_rate", value: 35.0, unit: "count/min", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert != nil)
+    if case .lowHeartRate(let r) = alert! {
+      #expect(r.value == 35.0)
+    } else {
+      Issue.record("Expected lowHeartRate alert")
+    }
+  }
+
+  @Test("detectAbnormalVitals returns lowBloodOxygen below 0.90")
+  func lowBloodOxygen() {
+    let reading = VitalReading(type: "oxygen_saturation", value: 0.85, unit: "%", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert != nil)
+    if case .lowBloodOxygen(let r) = alert! {
+      #expect(r.value == 0.85)
+    } else {
+      Issue.record("Expected lowBloodOxygen alert")
+    }
+  }
+
+  @Test("detectAbnormalVitals returns nil for normal heart rate")
+  func normalHeartRate() {
+    let reading = VitalReading(type: "heart_rate", value: 72.0, unit: "count/min", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert == nil)
+  }
+
+  @Test("detectAbnormalVitals returns nil for normal blood oxygen")
+  func normalBloodOxygen() {
+    let reading = VitalReading(type: "oxygen_saturation", value: 0.97, unit: "%", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert == nil)
+  }
+
+  @Test("detectAbnormalVitals returns nil for unknown type")
+  func unknownType() {
+    let reading = VitalReading(type: "step_count", value: 5000.0, unit: "count", timestamp: Date())
+    let alert = HealthKitService.shared.detectAbnormalVitals(reading: reading)
+    #expect(alert == nil)
+  }
+}
+
+struct RecordVitalEventRequestTests {
+
+  @Test("RecordVitalEventRequest encodes correctly")
+  func requestEncoding() throws {
+    let facilityId = UUID(uuidString: "00000000-0000-4000-A000-000000000001")!
+    let residentId = UUID(uuidString: "00000000-0000-4000-A000-000000000011")!
+    let date = Date(timeIntervalSince1970: 1715356800)
+    let req = RecordVitalEventRequest(
+      p_facility_id: facilityId, p_resident_id: residentId,
+      p_metric: "heart_rate", p_value: 72.0, p_timestamp: date
+    )
+    let data = try JSONEncoder().encode(req)
+    let json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+    #expect(json["p_facility_id"] as? String == "00000000-0000-4000-a000-000000000001")
+    #expect(json["p_resident_id"] as? String == "00000000-0000-4000-a000-000000000011")
+    #expect(json["p_metric"] as? String == "heart_rate")
+    #expect(json["p_value"] as? Double == 72.0)
+    #expect(json["p_timestamp"] as? String != nil)
+  }
+}
+
+struct HealthKitServiceTests {
+
+  @Test("HealthKitService is singleton")
+  func singleton() {
+    let instance1 = HealthKitService.shared
+    let instance2 = HealthKitService.shared
+    #expect(instance1 === instance2)
+  }
+
+  @Test("HealthKitService not available on simulator")
+  func notAvailable() {
+    #expect(HealthKitService.shared.isAvailable == false)
+  }
+
+  @Test("HealthKitService throws notAvailable on simulator")
+  func throwsNotAvailable() async {
+    do {
+      try await HealthKitService.shared.requestAuthorization()
+      Issue.record("Expected error")
+    } catch {
+      #expect(error is HealthKitError)
+      #expect(error.localizedDescription == "HealthKit not available on this device")
+    }
+  }
+}
+
+struct MediaModelTests {
+
+  @Test("MediaAttachment initializes")
+  func mediaAttachmentInit() {
+    let att = MediaAttachment(type: .photo)
+    #expect(att.type == .photo)
+  }
+
+  @Test("MediaAttachment coding round-trip")
+  func mediaAttachmentCoding() throws {
+    let att = MediaAttachment(type: .audio, localURL: URL(string: "file:///tmp/test.m4a"), remoteURL: URL(string: "https://example.com/test.m4a"))
+    let data = try JSONEncoder().encode(att)
+    let decoded = try JSONDecoder().decode(MediaAttachment.self, from: data)
+    #expect(decoded.type == .audio)
+    #expect(decoded.localURL?.absoluteString == "file:///tmp/test.m4a")
+    #expect(decoded.remoteURL?.absoluteString == "https://example.com/test.m4a")
+  }
+}
+
 struct FacilityStatsTests {
 
   @Test("FacilityStatsDTO decodes")
